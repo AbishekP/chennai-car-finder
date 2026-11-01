@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chennai Car Finder</title>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--ink:#16202a;--mut:#5d6b78;--line:#dfe4ea;--acc:#0b6bcb;--acc2:#e8f1fc;--ok:#137a3d;--okbg:#e4f5ea;--bad:#b3261e;--badbg:#fdecea;--warn:#8a5a00;--warnbg:#fff4d6;--bar1:#0b6bcb;--bar2:#e07b00;--bar3:#7a3fc4;--bar4:#137a3d;--bar5:#b3261e}
+@media (prefers-color-scheme:dark){:root{--bg:#10151b;--card:#18202a;--ink:#e8edf2;--mut:#9aa8b6;--line:#2a3540;--acc:#6ab0ff;--acc2:#1c2c40;--ok:#6fd39a;--okbg:#17301f;--bad:#ff8a80;--badbg:#3a1d1b;--warn:#ffd277;--warnbg:#3a2f12;--bar1:#6ab0ff;--bar2:#ffb454;--bar3:#c39bff;--bar4:#6fd39a;--bar5:#ff8a80}}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{padding:14px 20px;background:var(--card);border-bottom:1px solid var(--line)}
+header h1{margin:0 0 2px;font-size:21px}
+header p{margin:0;color:var(--mut);font-size:13px}
+.top{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+a.btn,button.btn{display:inline-block;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 11px;border-radius:8px;font:inherit;font-size:13px;cursor:pointer;text-decoration:none}
+a.btn:hover,button.btn:hover{border-color:var(--acc)}
+.btn.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
+.btn.sm{padding:2px 8px;font-size:12px}
+.tabs{display:flex;gap:4px;padding:10px 20px 0;background:var(--card);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tab{padding:9px 14px;border:1px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;cursor:pointer;color:var(--mut);background:none;font:inherit}
+.tab.on{background:var(--bg);border-color:var(--line);color:var(--ink);font-weight:600;margin-bottom:-1px}
+.wrap{display:grid;grid-template-columns:300px minmax(0,1fr);gap:14px;padding:14px 20px;max-width:1700px;margin:0 auto}
+.one{display:block}
+@media(max-width:950px){.wrap{grid-template-columns:1fr;padding:12px}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+.panel h3{margin:0 0 8px;font-size:14px}
+.panel h2{margin:0 0 6px;font-size:16px}
+.filters{position:sticky;top:8px;align-self:start;max-height:calc(100vh - 16px);overflow:auto}
+@media(max-width:950px){.filters{position:static;max-height:none}}
+.grp{margin-bottom:13px}
+.row{display:flex;gap:6px;align-items:center;font-size:13px;margin:3px 0;flex-wrap:wrap}
+input[type=range]{width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer;background:var(--card);color:var(--ink);user-select:none}
+.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.val{float:right;color:var(--acc);font-weight:600}
+input[type=number],input[type=text]{width:90px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;font-size:13px}
+select{padding:5px 6px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);max-width:100%;font:inherit;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:14px}
+.car{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:5px}
+.car.sel{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc2)}
+.car h4{margin:0;font-size:16px}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;background:var(--acc2);color:var(--acc);margin-right:4px}
+.mut{color:var(--mut);font-size:12.5px}
+.price{font-size:17px;font-weight:700}
+.row2{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:4px}
+.empty{padding:26px;text-align:center;color:var(--mut)}
+.detail{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px}
+@media(max-width:1250px){.detail{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12px;color:var(--mut);font-weight:600;position:sticky;top:0;background:var(--card);z-index:1}
+td.n,th.n{text-align:right;white-space:nowrap}
+tr.vr{cursor:pointer}
+tr.vr:hover{background:var(--acc2)}
+tr.vr.on{background:var(--acc2);outline:1px solid var(--acc)}
+.scroll{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:8px}
+.ok{background:var(--okbg);color:var(--ok);padding:1px 6px;border-radius:6px;font-size:11px;font-weight:600;white-space:nowrap}
+.over{background:var(--badbg);color:var(--bad);padding:1px 6px;border-radius:6px;font-size:11px;font-weight:600;white-space:nowrap}
+.est{background:var(--warnbg);color:var(--warn);padding:1px 6px;border-radius:6px;font-size:11px}
+.score{display:inline-block;min-width:34px;text-align:center;font-weight:700;border-radius:6px;padding:1px 6px;background:var(--acc2);color:var(--acc)}
+.form td:last-child{text-align:right;white-space:nowrap}
+.form tr.tot td{font-weight:700;border-top:2px solid var(--ink)}
+.form tr.fin td{font-weight:800;font-size:15px;background:var(--acc2)}
+.cmp th:first-child,.cmp td:first-child{position:sticky;left:0;background:var(--card);font-weight:600;min-width:170px;z-index:2}
+.cmp td,.cmp th{min-width:170px}
+.cmp tr.cat td{background:var(--acc2);color:var(--acc);font-weight:700;position:static}
+.best{color:var(--ok);font-weight:700}
+.yes{color:var(--ok);font-weight:700}
+.no{color:var(--bad)}
+.unk{color:var(--mut)}
+.note{font-size:12px;color:var(--mut);margin:8px 0 0}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:12px}
+.slots select{width:100%;margin-top:5px}
+.slot{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--card)}
+.slot.add{border-style:dashed}
+.slot.dropto,.cmp th.dropto{outline:2px dashed var(--acc);outline-offset:-2px;background:var(--acc2)}
+.slot.dragging,.cmp th.dragging{opacity:.4}
+.slothead{display:flex;align-items:center;gap:5px}
+.slothead .sp{margin-left:auto;display:flex;gap:3px}
+.handle{cursor:grab;color:var(--mut);font-size:16px;user-select:none;padding:0 2px}
+.cmp th[draggable]{cursor:grab}
+.cmptools{gap:8px;margin-bottom:10px}
+.cmptools .btn:disabled,.slothead .btn:disabled{opacity:.35;cursor:default}
+details.wbox>summary{cursor:pointer;font-weight:600;font-size:14px}
+/* filter panel: collapsible sections with tick lists */
+.fhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+input.wide{width:100%;margin-bottom:6px}
+.fsec{border-top:1px solid var(--line);padding:2px 0}
+.fsec>summary{cursor:pointer;font-weight:600;font-size:14px;list-style:none;display:flex;align-items:center;gap:6px;padding:7px 0}
+.fsec>summary::-webkit-details-marker{display:none}
+.fsec>summary::before{content:'▸';color:var(--mut);display:inline-block;width:10px;transition:transform .15s}
+.fsec[open]>summary::before{transform:rotate(90deg)}
+.fsec>summary .badge{margin-left:auto}
+.fbody{padding:0 0 10px 2px}
+.badge{font-size:11px;background:var(--acc2);color:var(--acc);border-radius:999px;padding:1px 8px;font-weight:600;white-space:nowrap}
+.ck{display:flex;align-items:center;gap:7px;font-size:13px;padding:3px 4px;cursor:pointer;border-radius:5px;flex:1;min-width:0}
+.ck:hover{background:var(--acc2)}
+.ck input{margin:0;flex:none}
+.ck .cnt{margin-left:auto;color:var(--mut);font-size:11.5px;white-space:nowrap;padding-left:6px}
+.ck2{display:flex;align-items:center}
+.clist{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:4px}
+.bgrp>.ck{font-weight:600}
+.sub{padding-left:18px}
+.exp{background:none;border:1px solid transparent;border-radius:5px;color:var(--mut);cursor:pointer;padding:1px 6px;font-size:12px}
+.exp:hover{border-color:var(--line);color:var(--acc)}
+.ftools{display:flex;gap:6px;margin:4px 0 6px;flex-wrap:wrap;align-items:center}
+.fsub{font-size:12px;color:var(--mut);font-weight:600;margin:8px 0 2px}
+.hidden{display:none!important}
+.bar{height:9px;border-radius:5px;background:var(--line);overflow:hidden;display:flex;min-width:90px}
+.bar i{display:block;height:100%}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin:6px 0}
+.legend b{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media(max-width:1000px){.grid2{grid-template-columns:1fr}}
+.feat{columns:2;column-gap:20px;font-size:13px}
+@media(max-width:1250px){.feat{columns:1}}
+.feat div{break-inside:avoid;padding:2px 0;border-bottom:1px dotted var(--line)}
+.feat h4{margin:10px 0 3px;font-size:12px;color:var(--acc);text-transform:uppercase;letter-spacing:.04em;column-span:all}
+ul.pc{margin:4px 0 8px;padding-left:18px;font-size:13px}
+.preset{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.sl{display:grid;grid-template-columns:130px 1fr 42px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
+.thumb{aspect-ratio:16/9;background:var(--bg);border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.thumb img{width:100%;height:100%;object-fit:contain;display:block}
+.thumb.big{aspect-ratio:16/9;margin-bottom:8px}
+img.noimg{display:none}
+.sw{display:inline-block;width:22px;height:22px;border-radius:50%;border:1px solid rgba(128,128,128,.6);cursor:pointer;padding:0;vertical-align:middle;flex:none}
+.sw.sm{width:15px;height:15px}
+.sw.on{outline:2px solid var(--acc);outline-offset:2px}
+.dots{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.cmp .thumb{max-width:240px}
+.star{cursor:pointer;color:var(--mut);font-size:15px;background:none;border:none;padding:0}
+.star.on{color:#e0a100}
+.svgbox svg{width:100%;max-width:820px;height:auto;display:block}
+@media print{header .top,.tabs,.filters,.row2,button,.btn,.slots select{display:none!important}.wrap{display:block!important;padding:0}.panel{break-inside:avoid;border:1px solid #bbb}.hidden{display:none!important}body{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Chennai Car Finder <span class="mut">· any budget from ₹5 L to ₹50 L+ on-road · 86 cars incl. EVs, all variants (pick a range in the filters)</span></h1>
+  <p>Chennai on-road prices (TN road tax, registration, insurance, TCS, FASTag), full feature lists, 5-year running cost, a best-value score and a drag-to-reorder comparator for any number of cars. Best viewed on a laptop in Chrome or Edge.</p>
+  <div class="top">
+    <a class="btn pri" href="videos.html">▶ Videos &amp; reviews page</a>
+    <button class="btn" id="linkBtn">🔗 Copy link to this search</button>
+    <button class="btn" id="csvBtn">⬇ Download filtered list (CSV)</button>
+    <button class="btn" onclick="window.print()">🖨 Print / save as PDF</button>
+    <span class="mut" id="stat"></span>
+  </div>
+</header>
+<div class="tabs">
+  <button class="tab on" data-tab="explore">1 · Explore &amp; filter</button>
+  <button class="tab" data-tab="compare">2 · Compare (<span id="cmpN">0</span>)</button>
+  <button class="tab" data-tab="best">3 · Best value for me</button>
+  <button class="tab" data-tab="cost">4 · 5-year cost &amp; EMI</button>
+  <button class="tab" data-tab="notes">5 · Notes, sources &amp; checklists</button>
+  <button class="tab" data-tab="focus">★ Punch vs XUV 3XO</button>
+</div>
+
+<div id="t-explore" class="wrap">
+  <aside class="panel filters" id="filters"></aside>
+  <main>
+    <div class="row" style="margin:0 0 8px"><b>Sort cars by</b>
+      <select id="carSort"><option value="price">Lowest price</option><option value="value">Best value score</option><option value="own">Lowest 5-year net cost</option><option value="mil">Lowest fuel cost per km</option><option value="safe">Safety</option></select>
+      <span class="mut">★ Favourite variants: <b id="slN">0</b> · <button class="btn sm" id="slShow">show only these</button></span></div>
+    <div id="cards" class="cards"></div>
+    <div id="detail"></div>
+  </main>
+</div>
+
+<div id="t-compare" class="wrap one hidden">
+  <div class="panel"><div class="row cmptools" id="cmpTools"></div><div class="slots" id="slots"></div>
+    <p class="note" style="margin:0">Drag a car by ⠿ (or its column heading in the table) to reorder, or use ◀ ▶. Add as many cars as you like – the table scrolls sideways.</p></div>
+  <div class="panel" id="cmpWBox"></div>
+  <div class="panel"><div style="overflow-x:auto"><table class="cmp" id="cmpTbl"></table></div>
+  <p class="note">Green = best in that row. “–” = not available or not verified. ✔ = fitted, ✘ = not offered on that variant. Add-ons / discount from the Explore filters and usage from the Best-value tab are applied.</p></div>
+</div>
+
+<div id="t-best" class="wrap one hidden"><div id="bestBox"></div></div>
+<div id="t-cost" class="wrap one hidden"><div id="costBox"></div></div>
+<div id="t-notes" class="wrap one hidden"><div id="notesBox"></div></div>
+<div id="t-focus" class="wrap one hidden"><div id="focusBox"></div></div>
+<script src="data.js?v=20261101g"></script>
+<script>
+const BODY_TYPES=[...new Set(Object.values(CARS).map(c=>c.body))];
+
+/* ============ PARSE VARIANTS ============ */
+const V=[]; let curCar=null;
+RAW.trim().split('\n').forEach(line=>{
+  line=line.trim(); if(!line) return;
+  if(line[0]==='@'){curCar=line.slice(1);return;}
+  const f=line.split(',');
+  const ex=+f[3]; let reg,ins,est=false;
+  if(f.length>=6){reg=+f[4];ins=+f[5];}
+  else if(f[1]==='EV'){est=true;reg=Math.round(ex*EV_TAX)+EV_REG_FEE;ins=Math.round(ex*0.045);}
+  else{est=true;reg=Math.round(ex<=1e6?ex*0.1335:ex*0.1832);ins=Math.round(ex<=1e6?ex*0.0575:ex*0.0495);}
+  const tcs=ex>1e6?Math.round(ex*0.01):0;
+  V.push({id:V.length,car:curCar,name:f[0],fuel:f[1],trans:f[2],ex,reg,ins,tcs,est,key:curCar+'|'+f[0]+'|'+f[1]+'|'+f[2]});
+});
+const VK=new Map(V.map(v=>[v.key,v]));
+const VBY={};V.forEach(v=>(VBY[v.car]=VBY[v.car]||[]).push(v));for(const k in VBY)VBY[k].sort((a,b)=>a.ex-b.ex);
+const isEVcar=k=>VBY[k].every(v=>v.fuel==='EV');
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+const isAT=v=>['AMT','AT','DCA','DCT'].includes(v.trans);
+const GB_ALL=['MT','iMT','AMT','TC','CVT','DCT','ECVT','EV'];
+const GB_LBL={MT:'Manual',iMT:'iMT (clutchless manual)',AMT:'AMT (automated manual)',TC:'Torque-converter automatic',CVT:'CVT / iVT',DCT:'Dual-clutch (DCT/DSG)',ECVT:'Hybrid e-CVT',EV:'Electric (single-speed)'};
+const FUELS_ALL=Object.keys(FUEL_LBL);
+const GB_FIX={'wagonr|P12|AT':'AMT','altok10|P|AMT':'AMT'};
+function gbType(v){const f=GB_FIX[v.car+'|'+v.fuel+'|'+v.trans];if(f)return f;if(v.fuel==='EV')return 'EV';const t=v.trans;if(t==='MT')return 'MT';if(t==='iMT')return 'iMT';if(t==='AMT')return 'AMT';if(t==='DCT'||t==='DCA')return 'DCT';if(v.fuel==='HY')return 'ECVT';if(/ivt|cvt/i.test(v.name))return 'CVT';return 'TC';}
+const gbLbl=v=>GB_LBL[gbType(v)];
+const grp=v=>v.trans==='MT'?'MT':'AUTO';
+
+/* ============ PARSE FEATURE RULES ============ */
+function parseTok(tok,lad,isVal){
+  let text=null;
+  if(isVal){const i=tok.indexOf(':');text=tok.slice(i+1);tok=tok.slice(0,i);}
+  let re=null;const q=tok.indexOf('?');
+  if(q>=0){re=new RegExp(tok.slice(q+1),'i');tok=tok.slice(0,q);}
+  let flags=[];const a=tok.indexOf('@');
+  if(a>=0){flags=tok.slice(a+1).split(',');tok=tok.slice(0,a);}
+  const rank=tok==='S'?0:lad.findIndex(l=>l.label===tok);
+  if(rank<0) throw new Error('bad trim label "'+tok+'"');
+  return {rank,flags,re,text};
+}
+for(const id in CARS){
+  const c=CARS[id];
+  c.lad=c.ladder.map(([label,re])=>({label,re:new RegExp(re,'i')}));
+  c.R={};
+  c.F.split('\n').forEach(line=>{
+    line=line.trim();if(!line)return;
+    const i=line.indexOf('='),k=line.slice(0,i),spec=line.slice(i+1),d=FDEF[k];
+    if(!d) throw new Error('unknown feature '+k+' in '+id);
+    if(spec==='-'){c.R[k]={none:true};return;}
+    if(spec==='S'&&d.kind==='b'){c.R[k]={all:true};return;}
+    c.R[k]={toks:spec.split(';').map(t=>parseTok(t,c.lad,d.kind==='v'))};
+  });
+}
+V.forEach(v=>{const lad=CARS[v.car].lad;v.rank=0;for(let i=lad.length-1;i>=0;i--){if(lad[i].re.test(v.name)){v.rank=i;break;}}});
+const FLAGF={AT:v=>isAT(v),MT:v=>v.trans==='MT',T:v=>v.fuel==='PT',O:v=>/\(O\)/i.test(v.name),NH:v=>v.fuel!=='HY',D:v=>v.fuel==='D'};
+const tokOK=(t,v)=>v.rank>=t.rank&&t.flags.every(f=>FLAGF[f](v))&&(!t.re||t.re.test(v.name));
+function feat(v,k){
+  v._f=v._f||{};if(v._f[k])return v._f[k];
+  const r=CARS[v.car].R[k],d=FDEF[k];let out;
+  if(!r) out={st:null,text:null};
+  else if(r.none) out={st:false,text:'-'};
+  else if(r.all) out={st:true,text:'✔'};
+  else if(d.kind==='b'){const y=r.toks.some(t=>tokOK(t,v));out={st:y,text:y?'✔':'✘'};}
+  else{let t=null;r.toks.forEach(x=>{if(tokOK(x,v))t=x.text;});out={st:t!=null&&t!=='-',text:t==null?'-':t};}
+  return (v._f[k]=out);
+}
+function credit(k,e){
+  if(e.st===null) return .4;
+  const d=FDEF[k];
+  if(d.kind==='b') return e.st?1:0;
+  const t=e.text;if(!e.st||t==='-')return 0;
+  if(k==='adas') return /level-2|l2/i.test(t)?1:/level-1|l1/i.test(t)?.6:.25;
+  if(d.neg&&d.neg.test(t))return 0;
+  if(d.half&&d.half.test(t))return .5;
+  return 1;
+}
+
+/* ============ STATE ============ */
+const BRANDS=[...new Set(Object.values(CARS).map(c=>c.brand))].sort();
+const PRICE_PRESETS=[['Any',0,7500000],['Under 8 L',0,800000],['8–10 L',800000,1000000],['10–15 L',1000000,1500000],['10–20 L',1000000,2000000],['15–20 L',1500000,2000000],['20–30 L',2000000,3000000],['30 L+',3000000,7500000]];
+const S_DEF=()=>({cars:new Set(Object.keys(CARS)),xVar:new Set(),minPrice:0,maxPrice:1500000,minMil:0,q:'',minPS:0,maxLen:0,minDash:0,unk:'hide',maxWait:0,fuels:new Set(FUELS_ALL),gb:new Set(GB_ALL),body:new Set(BODY_TYPES),seats:'any',basis:'final',
+  minStars:0,minGC:0,minBoot:0,musts:new Set(),onlySL:false,add:{ew:false,acc:false,kit:false,mkt:false},amt:{ew:12861,acc:14399,kit:9999,disc:0},selCar:null,selVar:null,carSort:'price'});
+const S=S_DEF();
+const U={kmMonth:1000,city:60,years:5,pP:107.76,pD:99.55,pC:99.5,pE:10,infl:3,downPct:20,rate:9.5,tenure:5,resaleOn:true};
+const W={price:15,own:20,safety:20,feat:20,space:10,perf:10,eff:5,ease:10};
+const WLAB={price:'Purchase price',own:'5-yr net ownership cost',safety:'Safety',feat:'Features',space:'Space & ride',perf:'Performance',eff:'Fuel cost per km',ease:'Driving ease (automatic)'};
+const WCOL={price:'var(--bar1)',own:'var(--bar2)',safety:'var(--bar4)',feat:'var(--bar3)',space:'#0a9aa6',perf:'var(--bar5)',eff:'#8a8f98',ease:'#c2185b'};
+const CMP=[];   /* variant ids in the order the compare columns are shown; no limit */
+const SL=new Set();
+let NOEV=false; /* "exclude electric cars" – shared by Compare and Best value */
+try{const s=JSON.parse(localStorage.getItem('ccf_v2')||'null');if(s){Object.assign(U,s.U||{});Object.assign(W,s.W||{});(s.SL||[]).forEach(k=>SL.add(k));
+  (s.CMP||[]).forEach(k=>{const v=VK.get(k);if(v&&!CMP.includes(v.id))CMP.push(v.id);});NOEV=!!s.NOEV;}}catch(e){}
+function persist(){try{localStorage.setItem('ccf_v2',JSON.stringify({U,W,SL:[...SL],CMP:CMP.map(i=>V[i].key),NOEV}));}catch(e){}}
+/* Filters are remembered between visits and can be shared as a link (#f=...). Cars, fuels and gearboxes are stored
+   as exclusions so cars added to data.js later still show up. */
+const FKEYS=['minPrice','maxPrice','minMil','q','minPS','maxLen','minDash','unk','maxWait','seats','basis','minStars','minGC','minBoot','carSort'];
+function filtersOut(){const o={};FKEYS.forEach(k=>o[k]=S[k]);const not=(all,set)=>all.filter(k=>!set.has(k));
+  o.xCars=not(Object.keys(CARS),S.cars);o.xFuels=not(FUELS_ALL,S.fuels);o.xGb=not(GB_ALL,S.gb);o.xBody=not(BODY_TYPES,S.body);o.xVar=[...S.xVar];o.musts=[...S.musts];o.add=S.add;o.amt=S.amt;return o;}
+function filtersIn(o){if(!o||typeof o!=='object')return;const d=S_DEF();FKEYS.forEach(k=>{if(o[k]!=null&&typeof o[k]===typeof d[k])S[k]=o[k];});
+  const ex=(all,x)=>new Set(all.filter(k=>!(x||[]).includes(k)));S.cars=ex(Object.keys(CARS),o.xCars);S.fuels=ex(FUELS_ALL,o.xFuels);S.gb=ex(GB_ALL,o.xGb);S.body=ex(BODY_TYPES,o.xBody);
+  const inn=(all,x)=>new Set((x||[]).filter(k=>all.includes(k)));S.musts=inn(Object.keys(FDEF),o.musts);S.xVar=new Set((o.xVar||[]).filter(k=>VK.has(k)));
+  /* older saved filters: brand and body chips were "only these" lists – fold them into the tick lists */
+  if(o.brands&&o.brands.length)Object.keys(CARS).forEach(k=>{if(!o.brands.includes(CARS[k].brand))S.cars.delete(k);});
+  if(o.body&&o.body.length)S.body=inn(BODY_TYPES,o.body);
+  Object.assign(S.add,o.add||{});Object.assign(S.amt,o.amt||{});}
+function saveFilters(){try{localStorage.setItem('ccf_filters',JSON.stringify(filtersOut()));}catch(e){}}
+function filterLink(){return location.href.split('#')[0]+'#f='+encodeURIComponent(JSON.stringify(filtersOut()));}
+try{const m=location.hash.match(/^#f=(.+)$/);filtersIn(m?JSON.parse(decodeURIComponent(m[1])):JSON.parse(localStorage.getItem('ccf_filters')||'null'));}catch(e){}
+let VER=0; const memo=new Map();
+function touch(){VER++;memo.clear();}
+
+/* ============ NUMBERS ============ */
+const inr=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+const lk=n=>(n/1e5).toFixed(2)+' L';
+function bootOf(v){const c=CARS[v.car],a=(BOOT_ALT[v.car]||{})[v.fuel];return a?{l:a[0],note:a[1],alt:true}:{l:c.boot,note:'',alt:false};}
+const dash=x=>(x==null||x==='')?'–':x;
+const unitOf=v=>v.fuel==='CNG'?'km/kg':v.fuel==='EV'?'km/kWh':'kmpl';
+/* typical dealer offer for this variant from MARKET (0 when unknown) */
+function mktDisc(v){const m=MARKET[v.car];if(!m||m.disc==null)return 0;return typeof m.disc==='number'?m.disc:(m.disc[v.fuel]??m.disc.all??0);}
+const waitTxt=id=>{const m=MARKET[id];return m&&m.wait?(m.wait[0]===m.wait[1]?m.wait[0]:m.wait[0]+'–'+m.wait[1])+' wk'+(m.wait[1]===1?'':'s'):null;};
+function calc(v){
+  const mand=v.ex+v.reg+v.ins+v.tcs+FASTAG;
+  const add=(S.add.ew?S.amt.ew:0)+(S.add.acc?S.amt.acc:0)+(S.add.kit?S.amt.kit:0);
+  const mkt=S.add.mkt?mktDisc(v):0;
+  const fin=mand+add-(+S.amt.disc||0)-mkt;
+  return {mand,add,mkt,fin,basis:S.basis==='final'?fin:mand};
+}
+function lookup(m,v){let x=m[v.fuel+'-'+v.trans];if(x==null)x=m[v.fuel+'-'+(isAT(v)||v.trans==='iMT'||v.trans==='DCT'?'AT':'MT')];return x==null?null:x;}
+function arai(v){return lookup(CARS[v.car].mil,v);}
+function owner(v){const m=RW[v.car];return m?lookup(m,v):null;}
+const ASSUME={P:17,PT:16,P12:19,D:19,CNG:22,HY:24,EV:6.5};
+function mil(v){const a=arai(v);return a!=null?{a,assumed:false}:{a:ASSUME[v.fuel],assumed:true};}
+/* EVs do better in town than on the highway, the reverse of engines: real-world ≈ 80% (city) / 66% (highway) of the claimed km/kWh */
+const facOf=v=>v.fuel==='EV'?[.80,.66]:[CITY_F,HWY_F];
+const blendOf=v=>{const[c,h]=facOf(v);return 1/(.5/c+.5/h);};
+const BLEND50=1/(.5/CITY_F+.5/HWY_F);
+/* city/highway: scaled so a 50/50 mix equals the owner-reported figure when we have one; otherwise 67%/82% of ARAI */
+function cityHwy(v){const a=arai(v);const r=owner(v),[CF,HF]=facOf(v),B=blendOf(v);if(a==null){return r==null?null:{c:r*CF/B,h:r*HF/B,src:'owner',r};}let s=1,src='est';
+  if(r!=null){s=Math.max(.55,Math.min(.95,r/a))/B;src='owner';}
+  return {c:Math.min(a*CF*s,a*.95),h:Math.min(a*HF*s,a*.98),src,r};}
+function chTxt(v){const x=cityHwy(v);return x?fm(x.c,v)+' / '+fm(x.h,v)+(x.src==='owner'?' <span class="ok" title="calibrated to owner-reported mileage">owner</span>':' <span class="est">est.</span>'):'–';}
+const fm=(m,v)=>m==null?'–':m.toFixed(1)+' '+unitOf(v);
+function realKm(v){const ch=cityHwy(v),p=U.city/100;if(!ch){const a=ASSUME[v.fuel],[CF,HF]=facOf(v);return 1/(p/(a*CF)+(1-p)/(a*HF));}return 1/(p/ch.c+(1-p)/ch.h);}
+const fuelPrice=v=>v.fuel==='D'?U.pD:v.fuel==='CNG'?U.pC:v.fuel==='EV'?U.pE:U.pP;
+const rimOf=c=>+(c.tyre.match(/R(\d\d)/)||[0,16])[1];
+function engOf(v){const e=CARS[v.car].eng;return e[v.fuel]||e.P||Object.values(e)[0];}
+
+const MARUTI=new Set(['dzire','swift','baleno','fronx','brezza','victoris','ertiga','wagonr','grandvitara','xl6','celerio','altok10','glanza','taisor','rumion','hyryder']);
+const TATA=new Set(['punch','nexon','tiago','tigor','altroz','curvv']),HYU=new Set(['exter','aura','nios']),RNB=new Set(['kiger','magnite','triber']),VWG=new Set(['virtus','taigun','slavia','kushaq','kylaq']);
+function gbxKey(v){const t=v.trans,c=v.car;if(v.fuel==='EV')return 'ev';if(v.fuel==='HY')return 'hybrid';if(t==='MT')return null;if(t==='iMT')return 'imt';
+ if(t==='AMT')return MARUTI.has(c)?'maruti-amt':HYU.has(c)?'hyundai-amt':RNB.has(c)?'renault-amt':c==='xuv3xo'?'mahindra-amt':'tata-amt';
+ if(t==='DCA')return 'tata-dca';
+ if(t==='DCT')return VWG.has(c)?'dsg':'hyundai-dct';
+ if(t==='AT'){if(MARUTI.has(c))return 'maruti-tc';if(c==='kylaq')return 'kylaq-at';if(c==='city'||c==='elevate'||c==='amaze'||(RNB.has(c)))return 'cvt';if(c==='i20'||c==='verna'||(c==='seltos'&&v.fuel==='P'))return 'hyundai-ivt';return 'tc-other';}
+ return null;}
+function gbxAllow(v){if(v.fuel==='EV')return 0;if(v.fuel==='HY')return GBX_HY;const o=GBX_OV[v.car+'|'+v.trans];return o!=null?o:(GBX[v.trans]||0);}
+const gbxNote=v=>{const k=gbxKey(v);return k?GBX_NOTE[k]:'Manual: no automated-gearbox upkeep allowance; clutch wear is covered under normal service/tyre-style wear.';};
+function own(v){
+  const k0=v.id+'|'+VER;if(memo.has(k0))return memo.get(k0);
+  const c=CARS[v.car],k=calc(v),Y=U.years,kmY=U.kmMonth*12,km=kmY*Y,rk=realKm(v);
+  let fuel=0;for(let y=0;y<Y;y++)fuel+=kmY/rk*fuelPrice(v)*Math.pow(1+U.infl/100,y);
+  const extra=((SVCX[v.car]||{})[v.fuel])??(v.fuel==='D'?4000:v.fuel==='CNG'?3000:0);
+  const base=(c.svc5+extra)/5*Math.max(.8,Math.pow(kmY/10000,.8));
+  let svc=0;for(let y=0;y<Y;y++)svc+=base*(y<5?1:Math.pow(1.08,y-4));
+  const cc=+((engOf(v)[0]||'').match(/(\d\.\d)L/)||[0,1.2])[1],kw=(engOf(v)[1]||0)*.7355,
+    tp=v.fuel==='EV'?TPR_EV[kw<=30?'s':kw<=65?'m':'l']:TPR[cc<=1.0?'s':cc>1.5?'l':'m'],TP3=tp[0]*1.18,TP1=tp[1]*1.18,od1=Math.max(v.ins-TP3,.5*v.ins),f=[.80,.70,.60,.50,.45,.40,.36],nb=[.20,.25,.35,.45,.50,.50,.50];
+  let ins=0;for(let y=1;y<Y;y++){const j=Math.min(y-1,6);ins+=od1*f[j]*(1-nb[j])+(y>=3?TP1:0);}
+  const gbx=gbxAllow(v)*Math.max(.8,Math.pow(kmY/10000,.8))*(Y/5);svc+=gbx;
+  const tyres=Math.floor(km/40000)*(TYRE_COST[rimOf(c)]||19000);
+  const r5=c.resale5/100,resale=U.resaleOn?v.ex*Math.exp(Math.log(r5)/5*Y):0;
+  const running=fuel+svc+ins+tyres,net=k.fin+running-resale;
+  const o={k,gbx,fuel,svc,ins,tyres,running,resale,net,km,perKm:net/km,fuelPerKm:fuelPrice(v)/rk,rk};
+  memo.set(k0,o);return o;
+}
+function stats(){
+  const k0='stats|'+VER;if(memo.has(k0))return memo.get(k0);
+  const a={fin:[1e12,0],net:[1e12,0],fpk:[1e12,0]};
+  V.forEach(v=>{const o=own(v);[['fin',o.k.fin],['net',o.net],['fpk',o.fuelPerKm]].forEach(([n,x])=>{a[n][0]=Math.min(a[n][0],x);a[n][1]=Math.max(a[n][1],x);});});
+  memo.set(k0,a);return a;
+}
+const clamp01=x=>Math.max(0,Math.min(1,x));
+const nz=(x,lo,hi)=>x==null?null:clamp01((x-lo)/(hi-lo));
+const avgK=a=>{a=a.filter(x=>x!=null);return a.length?a.reduce((s,x)=>s+x,0)/a.length:.5;};
+function parts(v){
+  const k0='p'+v.id+'|'+VER;if(memo.has(k0))return memo.get(k0);
+  const c=CARS[v.car],o=own(v),st=stats();
+  const inv=(x,r)=>1-clamp01((x-r[0])/(r[1]-r[0]||1));
+  let ff=0,tw=0;for(const k in FDEF){ff+=credit(k,feat(v,k))*FDEF[k].w;tw+=FDEF[k].w;}
+  const cam=Math.max(credit('cam360',feat(v,'cam360')),.6*credit('rcam',feat(v,'rcam')));
+  const sf=.62*((c.stars==null?3:c.stars)/5)+.14*credit('ab6',feat(v,'ab6'))+.14*credit('adas',feat(v,'adas'))+.10*cam;
+  const e=engOf(v);
+  const p={price:inv(o.k.fin,st.fin),own:inv(o.net,st.net),safety:sf,feat:ff/tw,
+    space:avgK([nz(bootOf(v).l,200,450),nz(c.gc,160,210),nz(c.wb,2430,2740),c.seats===7?1:.5]),
+    perf:avgK([nz(e[1],65,130),nz(e[2],85,300)]),eff:inv(o.fuelPerKm,st.fpk),ease:v.fuel==='HY'||v.fuel==='EV'?1:(EASE[v.trans]||0)};
+  memo.set(k0,p);return p;
+}
+function score(v){const p=parts(v);let s=0,t=0;for(const k in W){s+=W[k]*p[k];t+=W[k];}return t?100*s/t:0;}
+const sc=v=>Math.round(score(v));
+
+/* ============ FILTER ============ */
+function pass(v){
+  const c=CARS[v.car];
+  if(!S.cars.has(v.car)||S.xVar.has(v.key)||!S.fuels.has(v.fuel)||!S.gb.has(gbType(v)))return false;
+  if(!S.body.has(c.body))return false;
+  if(S.seats!=='any'&&c.seats!==+S.seats)return false;
+  if(S.q){const t=(c.name+' '+v.name+' '+c.body+' '+FUEL_LBL[v.fuel]+' '+gbLbl(v)).toLowerCase();if(!S.q.toLowerCase().split(/\s+/).every(w=>t.includes(w)))return false;}
+  const b=calc(v).basis;if(b>S.maxPrice||b<S.minPrice)return false;
+  if(S.minPS>0&&(engOf(v)[1]||0)<S.minPS)return false;
+  if(S.maxLen>0&&(!c.dim||c.dim[0]>S.maxLen))return false;
+  if(S.minDash>0&&dataPct(v.car)<S.minDash)return false;
+  if(S.minMil>0&&v.fuel!=='EV'){const m=arai(v);if(m==null||m<S.minMil)return false;}
+  if(S.maxWait>0){const m=MARKET[v.car];if(m&&m.wait&&m.wait[0]>S.maxWait)return false;}
+  if(S.minStars>0&&(c.stars==null||c.stars<S.minStars))return false;
+  if(S.minGC>0&&(c.gc==null||c.gc<S.minGC))return false;
+  if(S.minBoot>0){const b=bootOf(v).l;if(b==null||b<S.minBoot)return false;}
+  for(const k of S.musts){const e=feat(v,k);if(e.st===null){if(S.unk==='hide')return false;continue;}if(credit(k,e)<(k==='adas'?.6:1))return false;}
+  if(S.onlySL&&!SL.has(v.key))return false;
+  return true;
+}
+/* share of the 45 feature rows that have verified data for this car */
+function dataPct(id){const k0='dp|'+id;if(memo.has(k0))return memo.get(k0);const n=Object.keys(FDEF).length,p=Math.round(100*Object.keys(CARS[id].R).filter(k=>FDEF[k]).length/n);memo.set(k0,p);return p;}
+const byFin=(a,b)=>calc(a).fin-calc(b).fin;
+const stars=n=>n==null?'Not rated':'★'.repeat(n)+'☆'.repeat(5-n);
+
+/* ============ FILTER PANEL ============ */
+/* Collapsible sections of tick lists. Cars are grouped by brand; ▸ next to a car opens its variants so single
+   variants can be ticked off. Section open/closed state and the car-list search survive re-renders. */
+const CARS_BY_BRAND=BRANDS.map(b=>[b,Object.keys(CARS).filter(k=>CARS[k].brand===b).sort((x,y)=>CARS[x].name.localeCompare(CARS[y].name))]);
+const shortName=k=>CARS[k].name.replace(new RegExp('^('+BRANDS.join('|')+') '),'');
+const countBy=fn=>{const o={};V.forEach(v=>{const k=fn(v);o[k]=(o[k]||0)+1;});return o;};
+const FUELN=countBy(v=>v.fuel),GBN=countBy(gbType),BODYN=countBy(v=>CARS[v.car].body);
+const FOPEN=new Set(['budget','cars','fuel','gb']),EXP=new Set();let carQ='';
+/* 1 = car and all its variants ticked, .5 = some variants ticked, 0 = none */
+function carOn(k){if(!S.cars.has(k))return 0;const n=VBY[k].filter(v=>S.xVar.has(v.key)).length;return n===0?1:n===VBY[k].length?0:.5;}
+function setCar(k,on){VBY[k].forEach(v=>S.xVar.delete(v.key));on?S.cars.add(k):S.cars.delete(k);}
+const ckb=(attrs,state,label,cnt,type='checkbox')=>`<label class="ck"><input type="${type}" ${attrs} ${state===1||state===true?'checked':''} ${state===.5?'data-ind="1"':''}><span>${label}</span>${cnt!=null?`<span class="cnt">${cnt}</span>`:''}</label>`;
+function applyCarQ(){const box=document.getElementById('fCars');if(!box)return;const w=carQ.toLowerCase().trim();
+  box.querySelectorAll('.bgrp').forEach(g=>{let any=false;g.querySelectorAll('.crow').forEach(r=>{const ok=!w||r.dataset.n.includes(w);r.classList.toggle('hidden',!ok);any=any||ok;});g.classList.toggle('hidden',!any);});}
+function renderFilters(){
+  const f=document.getElementById('filters'),top=f.scrollTop,lt=(f.querySelector('#fCars')||{}).scrollTop||0;
+  const sec=(id,title,tag,body)=>`<details class="fsec" data-s="${id}" ${FOPEN.has(id)?'open':''}><summary><span>${title}</span>${tag?`<span class="badge">${tag}</span>`:''}</summary><div class="fbody">${body}</div></details>`;
+  const part=(set,all)=>set.size<all.length?set.size+' of '+all.length:'';
+  const sel=(id,cur,opts)=>`<select id="${id}">${opts.map(([v,l])=>`<option value="${v}" ${String(cur)===String(v)?'selected':''}>${l}</option>`).join('')}</select>`;
+  const nCars=Object.keys(CARS).length,nOn=Object.keys(CARS).filter(k=>carOn(k)).length,nX=S.xVar.size;
+  const nSize=[S.minStars,S.minGC,S.minBoot,S.minPS,S.maxLen].filter(Boolean).length;
+  const nBody=(S.body.size<BODY_TYPES.length?1:0)+(S.seats!=='any'?1:0);
+  const nMkt=(S.maxWait?1:0)+(S.add.mkt?1:0),nAdd=['ew','acc','kit'].filter(k=>S.add[k]).length+(S.amt.disc?1:0);
+  const carsHTML=CARS_BY_BRAND.map(([b,ks])=>{
+    const st=ks.map(carOn),bs=st.every(x=>x===1)?1:st.every(x=>x===0)?0:.5;
+    return `<div class="bgrp">${ckb(`data-brand="${b}"`,bs,b,ks.length+' car'+(ks.length>1?'s':''))}<div class="sub">${ks.map(k=>{const open=EXP.has(k);
+      return `<div class="crow" data-n="${esc((CARS[k].name+' '+CARS[k].body).toLowerCase())}"><div class="ck2">${ckb(`data-car="${k}"`,carOn(k),shortName(k),VBY[k].length+' var.')}<button class="exp" data-exp="${k}" title="${open?'Hide':'Pick individual'} variants">${open?'▾':'▸'}</button></div>
+        ${open?`<div class="sub">${VBY[k].map(v=>ckb(`data-vk="${esc(v.key)}"`,S.cars.has(k)&&!S.xVar.has(v.key),`${esc(v.name)} <span class="mut">${FUEL_LBL[v.fuel]} · ${GB_LBL[gbType(v)].replace(/ \(.*/,'')}</span>`,lk(v.ex))).join('')}</div>`:''}</div>`;}).join('')}</div></div>`;}).join('');
+  const featList=keys=>keys.map(k=>ckb(`data-set="musts" data-k="${k}"`,S.musts.has(k),FDEF[k].label)).join('');
+  f.innerHTML=`<div class="fhead"><h3 style="margin:0">Filters</h3><button class="btn sm" id="reset">Reset all</button></div>
+  <input type="text" id="fQ" class="wide" placeholder="Search: creta diesel, zxi, sedan…" value="${esc(S.q)}">
+  ${sec('budget','On-road budget',`<span id="vP">${lk(S.minPrice)} – ${lk(S.maxPrice)}</span>`,`
+    <div class="preset" id="pPre">${PRICE_PRESETS.map(([l,a,b])=>`<span class="chip ${S.minPrice===a&&S.maxPrice===b?'on':''}" data-a="${a}" data-b="${b}">${l}</span>`).join('')}</div>
+    <div class="row">From ₹ <input type="number" id="nP0" min="0" step="0.5" value="${S.minPrice/1e5}" style="width:64px"> L to ₹ <input type="number" id="nP1" min="1" step="0.5" value="${S.maxPrice/1e5}" style="width:64px"> L</div>
+    <div class="mut">Min</div><input type="range" id="rP0" min="0" max="7500000" step="25000" value="${S.minPrice}">
+    <div class="mut">Max</div><input type="range" id="rP" min="400000" max="7500000" step="25000" value="${S.maxPrice}">
+    <div class="row">Applies to ${sel('basis',S.basis,[['final','Final payable (with add-ons)'],['mand','Mandatory on-road only']])}</div>`)}
+  ${sec('cars','Cars &amp; variants',nOn<nCars||nX?nOn+' of '+nCars+(nX?' · '+nX+' variant'+(nX>1?'s':'')+' off':''):'',`
+    <input type="text" id="fCarQ" class="wide" placeholder="Find a car or brand…" value="${esc(carQ)}">
+    <div class="ftools"><button class="btn sm" id="allC">Tick all</button><button class="btn sm" id="noC">Untick all</button><span class="mut">▸ picks single variants</span></div>
+    <div class="clist" id="fCars">${carsHTML}</div>`)}
+  ${sec('fuel','Fuel',part(S.fuels,FUELS_ALL),FUELS_ALL.map(k=>ckb(`data-set="fuels" data-k="${k}"`,S.fuels.has(k),FUEL_LBL[k],(FUELN[k]||0)+' var.')).join(''))}
+  ${sec('gb','Gearbox',part(S.gb,GB_ALL),GB_ALL.map(k=>ckb(`data-set="gb" data-k="${k}"`,S.gb.has(k),GB_LBL[k],(GBN[k]||0)+' var.')).join(''))}
+  ${sec('body','Body type &amp; seats',nBody||'',BODY_TYPES.map(k=>ckb(`data-set="body" data-k="${k}"`,S.body.has(k),k,(BODYN[k]||0)+' var.')).join('')+
+    `<div class="fsub">Seats</div>`+[['any','Any'],['5','5 seats'],['7','7 seats']].map(([v,l])=>ckb(`name="fSeats" value="${v}"`,S.seats===v,l,null,'radio')).join(''))}
+  ${sec('feat','Must-have features',S.musts.size?S.musts.size+' ticked':'',`
+    <div class="fsub" style="margin-top:0">Most asked for</div>${featList(MUSTS.map(m=>m[0]))}
+    ${FEATS.map(([g,list])=>{const ks=list.map(x=>x[0]).filter(k=>!MUSTS.some(m=>m[0]===k));const n=ks.filter(k=>S.musts.has(k)).length;
+      return ks.length?`<details class="fsub-d"><summary class="fsub" style="cursor:pointer">${g} (${ks.length})${n?` <span class="badge">${n}</span>`:''}</summary>${featList(ks)}</details>`:'';}).join('')}
+    <div class="row" style="margin-top:6px">If a feature is unverified for a car: ${sel('fUnk',S.unk,[['hide','hide it'],['show','still show it']])}</div>`)}
+  ${sec('size','Safety, size &amp; power',nSize||'',`
+    <div class="row">Crash-test stars ${sel('fStars',S.minStars,[[0,'any'],[3,'3★+'],[4,'4★+'],[5,'5★']])}</div>
+    <div class="row">Ground clearance ${sel('fGC',S.minGC,[[0,'any'],...[180,190,200].map(n=>[n,n+' mm+'])])}</div>
+    <div class="row">Boot space ${sel('fBoot',S.minBoot,[[0,'any'],...[250,300,350,400,450,500].map(n=>[n,n+' L+'])])}</div>
+    <div class="row">Power ${sel('fPS',S.minPS,[[0,'any'],...[80,100,120,150,180].map(n=>[n,n+' PS+'])])}</div>
+    <div class="row">Length ${sel('fLen',S.maxLen,[[0,'any'],[3995,'Under 4 m (easy parking)'],[4400,'Up to 4.4 m'],[4700,'Up to 4.7 m']])}</div>`)}
+  ${sec('mil','Mileage',S.minMil?S.minMil+'+ km/l':'',`<div class="row">Min ARAI mileage <span class="val" id="vM">${S.minMil||'any'}</span></div>
+    <input type="range" id="rM" min="0" max="34" step="1" value="${S.minMil}"><div class="mut">Variants with no published mileage are hidden when above 0. Electric cars are not affected.</div>`)}
+  ${sec('mkt','Waiting time &amp; offers',nMkt||'',`
+    <div class="row">Max waiting ${sel('fWait',S.maxWait,[[0,'any'],...[1,2,4,8,12].map(n=>[n,n+' week'+(n>1?'s':'')])])}</div>
+    ${ckb('id="fMkt"',S.add.mkt,'Subtract each car’s typical dealer offer')}
+    <div class="mut">Offers and waiting as of ${MARKET_ASOF}; they change monthly and vary by dealer.</div>`)}
+  ${sec('dq','Data quality',S.minDash?S.minDash+'%+':'',`<div class="row">Min verified feature data ${sel('fDQ',S.minDash,[[0,'any'],[50,'50%+'],[75,'75%+'],[90,'90%+']])}</div>`)}
+  ${sec('add','Dealer add-ons &amp; discount',nAdd||'',`<div class="mut" style="margin-bottom:4px">Typical dealer charges – edit to match your quote</div>
+    <label class="row"><input type="checkbox" data-a="ew" ${S.add.ew?'checked':''}> Extended warranty <input type="number" data-m="ew" value="${S.amt.ew}"></label>
+    <label class="row"><input type="checkbox" data-a="acc" ${S.add.acc?'checked':''}> Accessories <input type="number" data-m="acc" value="${S.amt.acc}"></label>
+    <label class="row"><input type="checkbox" data-a="kit" ${S.add.kit?'checked':''}> Essential kit <input type="number" data-m="kit" value="${S.amt.kit}"></label>
+    <label class="row">Discount ₹ <input type="number" data-m="disc" value="${S.amt.disc}"></label>`)}`;
+  const q=s=>f.querySelector(s);
+  f.querySelectorAll('[data-ind]').forEach(i=>i.indeterminate=true);
+  f.scrollTop=top;q('#fCars').scrollTop=lt;applyCarQ();
+  f.querySelectorAll('details.fsec').forEach(d=>d.ontoggle=()=>d.open?FOPEN.add(d.dataset.s):FOPEN.delete(d.dataset.s));
+  const redo=()=>{renderFilters();renderAll(false);};
+  const setP=(a,b,redraw)=>{S.minPrice=Math.max(0,a);S.maxPrice=Math.max(b,S.minPrice);if(redraw){renderFilters();}else{q('#vP').textContent=lk(S.minPrice)+' – '+lk(S.maxPrice);q('#nP0').value=S.minPrice/1e5;q('#nP1').value=S.maxPrice/1e5;q('#rP0').value=S.minPrice;q('#rP').value=S.maxPrice;q('#pPre').querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));}renderAll(false);};
+  q('#rP').oninput=e=>setP(Math.min(S.minPrice,+e.target.value),+e.target.value);
+  q('#rP0').oninput=e=>setP(+e.target.value,Math.max(S.maxPrice,+e.target.value));
+  q('#nP0').onchange=e=>setP(Math.round((+e.target.value||0)*1e5),S.maxPrice);
+  q('#nP1').onchange=e=>setP(S.minPrice,Math.round((+e.target.value||75)*1e5));
+  q('#pPre').onclick=e=>{const d=e.target.dataset;if(d.a==null)return;setP(+d.a,+d.b,true);};
+  q('#fQ').oninput=e=>{S.q=e.target.value.trim();renderAll(false);};
+  q('#fCarQ').oninput=e=>{carQ=e.target.value;applyCarQ();};
+  q('#fCars').onclick=e=>{const k=e.target.dataset.exp;if(!k)return;EXP.has(k)?EXP.delete(k):EXP.add(k);renderFilters();};
+  const num={fPS:'minPS',fWait:'maxWait',fLen:'maxLen',fDQ:'minDash',fStars:'minStars',fGC:'minGC',fBoot:'minBoot'};
+  for(const id in num)q('#'+id).onchange=e=>{S[num[id]]=+e.target.value;redo();};
+  q('#fUnk').onchange=e=>{S.unk=e.target.value;redo();};
+  q('#basis').onchange=e=>{S.basis=e.target.value;renderAll(false);};
+  q('#fMkt').onchange=e=>{S.add.mkt=e.target.checked;touch();redo();};
+  q('#rM').oninput=e=>{S.minMil=+e.target.value;q('#vM').textContent=S.minMil||'any';renderAll(false);};
+  q('#rM').onchange=()=>renderFilters();
+  /* every tick list goes through one handler */
+  f.onchange=e=>{const t=e.target,d=t.dataset;
+    if(d.brand){const ks=CARS_BY_BRAND.find(x=>x[0]===d.brand)[1],on=!ks.every(k=>carOn(k)===1);ks.forEach(k=>setCar(k,on));return redo();}
+    if(d.car){setCar(d.car,carOn(d.car)!==1);return redo();}
+    if(d.vk){const v=VK.get(d.vk);if(!S.cars.has(v.car)){S.cars.add(v.car);VBY[v.car].forEach(x=>S.xVar.add(x.key));}t.checked?S.xVar.delete(d.vk):S.xVar.add(d.vk);return redo();}
+    if(d.set){const s=S[d.set];t.checked?s.add(d.k):s.delete(d.k);return redo();}
+    if(t.name==='fSeats'){S.seats=t.value;return redo();}
+  };
+  q('#allC').onclick=()=>{Object.keys(CARS).forEach(k=>setCar(k,true));redo();};
+  q('#noC').onclick=()=>{Object.keys(CARS).forEach(k=>setCar(k,false));redo();};
+  f.querySelectorAll('input[data-a]').forEach(i=>i.onchange=e=>{S.add[e.target.dataset.a]=e.target.checked;touch();redo();});
+  f.querySelectorAll('[data-m]').forEach(i=>i.oninput=e=>{S.amt[e.target.dataset.m]=+e.target.value||0;touch();renderAll(false);});
+  q('#reset').onclick=()=>{Object.assign(S,S_DEF());carQ='';touch();redo();};
+}
+
+/* ============ PICTURES, COLOURS & OFFICIAL LINKS ============ */
+/* MEDIA (data.js) gives each car its colours with a photo per colour. The chosen colour is kept per car, and clicking a
+   swatch anywhere swaps every picture of that car on the page in place (no re-render). */
+const COLSEL={};
+function colOf(id){const m=MEDIA[id];if(!m||!m.col.length)return null;const i=Math.min(COLSEL[id]||0,m.col.length-1);return {i,c:m.col[i]};}
+const swBg=hex=>{const h=hex.split(',');return h.length>1?`linear-gradient(135deg,${h[0]} 0 58%,${h[1]} 58%)`:h[0];};
+/* a few colours have no photo: show the car's first photo instead and say so next to the colour name */
+const photoOf=(id,i)=>{const m=MEDIA[id];return m.col[i][2]||(m.col.find(c=>c[2])||[])[2]||'';};
+const colName=(id,i)=>MEDIA[id].col[i][0]+(MEDIA[id].col[i][2]?'':' (no photo – showing another colour)');
+const carImg=id=>{const x=colOf(id);return x?`<img src="${photoOf(id,x.i)}" data-cimg="${id}" alt="${esc(CARS[id].name+' in '+x.c[0])}" loading="lazy" onerror="this.classList.add('noimg')">`:'';};
+function dotsHTML(id,small,max=12){const m=MEDIA[id];if(!m)return '';const x=colOf(id);
+  return m.col.slice(0,max).map((c,i)=>`<button class="sw ${small?'sm':''} ${i===x.i?'on':''}" style="background:${swBg(c[1])}" data-cc="${id}" data-ci="${i}" title="${esc(c[0])}" aria-label="${esc(c[0])}"></button>`).join('')+
+    (m.col.length>max?`<span class="mut">+${m.col.length-max}</span>`:'')+`<span class="mut" data-cname="${id}">${esc(colName(id,x.i))}</span>`;}
+function linksHTML(id){const m=MEDIA[id];if(!m)return '';const a=(u,l,cls='')=>`<a class="btn sm ${cls}" href="${u}" target="_blank" rel="noopener">${l} ↗</a>`;
+  return (m.v360?a(m.v360,'⟳ 360° view – official site','pri'):'')+a(m.site,'Official website'+(m.siteUnverified?' (unverified)':''),m.v360?'':'')+
+    (m.cw360?a(m.cw360,'⟳ 360° view'+(m.v360?' – CarWale':' – CarWale (maker has no direct link)'),m.v360?'':'pri'):'')+a(m.cw+'images/','All photos');}
+function colourPanel(id,v){const m=MEDIA[id];if(!m)return '';
+  return `<div class="panel"><h3>Colours &amp; pictures – ${CARS[id].name} <span class="mut">(${m.col.length} colour${m.col.length>1?'s':''})</span></h3>
+    <div class="thumb big">${carImg(id)}</div><div class="dots">${dotsHTML(id,false,40)}</div>
+    <div class="row2" style="margin-top:8px">${linksHTML(id)}</div>
+    <p class="note">Tap a swatch to see the car in that colour. Dual-tone (two-colour) paints are usually only on upper variants – on the official site's colour/360° configurator you can pick the variant${v?' ('+esc(v.name)+')':''} and colour together. Makers do not publish a separate 360° page per variant, so the links open the model's 360° viewer. ${m.v360?'':'This maker has no direct 360° link on its site, so the 360° button opens CarWale’s viewer.'}${m.siteUnverified?' Tata’s website had an expired security certificate when checked (Nov 2026), so its link could not be verified.':''} Colours and photos as listed on ${id==='c3'?'CarDekho':'CarWale'}, ${MEDIA_ASOF}.</p></div>`;}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ci]');if(!b)return;e.stopPropagation();const id=b.dataset.cc,i=+b.dataset.ci;COLSEL[id]=i;const c=MEDIA[id].col[i];
+  document.querySelectorAll(`[data-cimg="${id}"]`).forEach(im=>{im.classList.remove('noimg');im.src=photoOf(id,i);im.alt=CARS[id].name+' in '+c[0];});
+  document.querySelectorAll(`[data-cc="${id}"]`).forEach(s=>s.classList.toggle('on',+s.dataset.ci===i));
+  document.querySelectorAll(`[data-cname="${id}"]`).forEach(s=>s.textContent=colName(id,i));},true);
+
+/* ============ CARDS ============ */
+function renderCards(){
+  const box=document.getElementById('cards');
+  const groups={};V.filter(pass).forEach(v=>(groups[v.car]=groups[v.car]||[]).push(v));
+  const ids=Object.keys(groups);
+  document.getElementById('stat').textContent=`${V.filter(pass).length} of ${V.length} variants match · ${ids.length} cars`;
+  document.getElementById('slN').textContent=SL.size;
+  if(!ids.length){box.innerHTML='<div class="panel empty" style="grid-column:1/-1">No variant matches these filters. Try raising the max price, removing a must-have feature or lowering the star/mileage filter.</div>';return;}
+  const info=id=>{const g=groups[id];const fin=g.map(v=>calc(v).fin),sc_=g.map(sc),net=g.map(v=>own(v).net);return {g,fin,sc_,net,fpk:Math.min(...g.map(v=>own(v).fuelPerKm))};};
+  const I={};ids.forEach(id=>I[id]=info(id));
+  const so={price:id=>Math.min(...I[id].fin),value:id=>-Math.max(...I[id].sc_),own:id=>Math.min(...I[id].net),mil:id=>I[id].fpk,safe:id=>-(CARS[id].stars==null?3:CARS[id].stars)};
+  ids.sort((a,b)=>so[S.carSort](a)-so[S.carSort](b));
+  box.innerHTML=ids.map(id=>{
+    const c=CARS[id],x=I[id],ms=x.g.map(arai).filter(m=>m!=null);
+    const cng=x.g.some(v=>v.fuel==='CNG');
+    return `<div class="car ${S.selCar===id?'sel':''}">
+      ${MEDIA[id]?`<div class="thumb">${carImg(id)}</div><div class="dots">${dotsHTML(id,true)}</div>`:''}
+      <div><span class="tag">${c.body}</span><span class="tag">${c.seats} seats</span><span class="tag">${stars(c.stars)}</span></div>
+      <h4>${c.name}</h4>
+      <div class="price">${lk(Math.min(...x.fin))} – ${lk(Math.max(...x.fin))}</div>
+      <div class="mut">Final on-road (Chennai) · ${x.g.length} matching variant${x.g.length>1?'s':''} · <span class="${dataPct(id)>=90?'ok':'est'}" title="share of the ${Object.keys(FDEF).length} feature rows verified for this car">data ${dataPct(id)}%</span></div>
+      <div class="mut">${x.g.some(v=>v.fuel==='EV')?'Claimed efficiency':'ARAI'}: ${ms.length?Math.min(...ms)+' – '+Math.max(...ms)+' '+[...new Set(x.g.map(unitOf))].join(' / '):'–'}<br>Best value score: <span class="score">${Math.max(...x.sc_)}</span> · 5-yr net cost from ${lk(Math.min(...x.net))}<br>FY26 sales: ${dash(c.fy26)}${waitTxt(id)||MARKET[id]?'<br>Waiting: '+dash(waitTxt(id))+(MARKET[id]&&MARKET[id].disc!=null?' · offers up to '+inr(Math.max(...x.g.map(mktDisc))):''):''}${c.batt?'<br>Battery: '+c.batt+' kWh · '+c.range+' km claimed':''}</div>
+      <div class="row2"><button class="btn pri" data-open="${id}">View variants</button><button class="btn" data-cmp="${id}">+ Compare</button><a class="btn" href="videos.html?car=${id}">▶ Videos</a></div></div>`;}).join('');
+  box.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{S.selCar=b.dataset.open;S.selVar=null;renderCards();renderDetail();document.getElementById('detail').scrollIntoView({behavior:'smooth'});});
+  box.querySelectorAll('[data-cmp]').forEach(b=>b.onclick=()=>addCompare(b.dataset.cmp));
+}
+
+/* ============ DETAIL ============ */
+function featHTML(v,showMissing){
+  let h='<div class="feat">';
+  for(const [g,list] of FEATS){
+    h+=`<h4>${g}</h4>`;
+    for(const [k,label,kind] of list){
+      const e=feat(v,k);let s;
+      if(e.st===null) s='<span class="unk">– not verified</span>';
+      else if(kind==='b') s=e.st?'<span class="yes">✔ Yes</span>':'<span class="no">✘ Not offered</span>';
+      else s=e.st?`<span class="yes">${e.text}</span>`:'<span class="no">✘ None</span>';
+      h+=`<div><span class="mut">${label}</span><br>${s}</div>`;
+    }
+  }
+  return h+'</div>';
+}
+function renderDetail(){
+  const d=document.getElementById('detail');
+  if(!S.selCar){d.innerHTML='<div class="panel empty">Pick a car above (“View variants”) to see every variant with its on-road price, mileage, features and 5-year cost.</div>';return;}
+  const c=CARS[S.selCar];
+  const all=V.filter(v=>v.car===S.selCar).sort(byFin);
+  const shown=all.filter(pass);
+  if(S.selVar==null||!all.find(v=>v.id===S.selVar)) S.selVar=(shown[0]||all[0]).id;
+  const sv=V[S.selVar];
+  const rows=shown.map(v=>{const k=calc(v),m=mil(v),o=own(v);
+    return `<tr class="vr ${v.id===S.selVar?'on':''}" data-v="${v.id}"><td><button class="star ${SL.has(v.key)?'on':''}" data-sl="${v.id}" title="Add/remove favourite">★</button> ${v.name}${v.est?' <span class="est" title="Tax and insurance estimated by formula">est.</span>':''}<div class="mut">${FUEL_LBL[v.fuel]} · ${gbLbl(v)}</div></td>
+    <td class="n">${inr(v.ex)}</td><td class="n"><b>${inr(k.fin)}</b></td><td class="n">${m.assumed?'<span class="mut">–</span>':fm(m.a,v)}</td><td class="n">${chTxt(v)}</td>
+    <td class="n">${lk(o.net)}</td><td class="n"><span class="score">${sc(v)}</span></td>
+    <td>${k.basis<=1500000?'<span class="ok">≤ ₹15 L</span>':'<span class="over">&gt; ₹15 L</span>'}</td></tr>`;}).join('');
+  const k=calc(sv),m=mil(sv),o=own(sv),e=engOf(sv);
+  const addRows=[['Extended warranty',S.add.ew?S.amt.ew:0],['Accessories',S.add.acc?S.amt.acc:0],['Essential kit',S.add.kit?S.amt.kit:0]];
+  const p=parts(sv);
+  d.innerHTML=`<div class="detail">
+   <div><div class="panel"><h3>${c.name} – variants (${shown.length} match${shown.length!==all.length?' of '+all.length:''})</h3>
+    <div class="scroll"><table><thead><tr><th>Variant</th><th class="n">Ex-showroom</th><th class="n">On-road (final)</th><th class="n">ARAI</th><th class="n">Est. city / hwy</th><th class="n">5-yr net cost</th><th class="n">Value</th><th>Budget</th></tr></thead><tbody>${rows||'<tr><td colspan="8" class="empty">No variant of this car matches the current filters.</td></tr>'}</tbody></table></div>
+    <div class="row2" style="margin-top:8px">${favBtn(sv)}<button class="btn" data-addv="1">+ Compare this variant</button><span class="mut" style="align-self:center">Selected: ${esc(sv.name)} · ${gbLbl(sv)}</span></div>
+    <p class="note">Tap a row to select it and see the full breakdown. ★ on a row = add/remove favourite. “–” mileage means no verified ARAI figure (running-cost maths then assumes a typical value). City/highway are estimates (≈67% / ≈82% of ARAI). 5-yr net cost = on-road + fuel + service + insurance renewals + tyres − resale (set usage in tab 3).</p></div>
+    <div class="panel"><h3>Features of ${c.name} ${sv.name} (${gbLbl(sv)}, ${FUEL_LBL[sv.fuel]})</h3>${featHTML(sv)}
+    <p class="note">${c.conf==='good'?'Trim-wise features compiled from brochure/review variant guides (Autocar India, Team-BHP, Gaadify, 91Wheels, CarDekho, Spinny).':'Feature data for this car is partial – “not verified” items are not claimed either way. Confirm on the brochure.'} Dealer-fitted accessories are not counted.</p></div></div>
+   <div>
+    ${colourPanel(S.selCar,sv)}
+    <div class="panel"><h3>Price breakdown – ${c.name} ${sv.name}</h3>
+     <table class="form">
+      <tr><td>Ex-showroom price</td><td>${inr(sv.ex)}</td></tr>
+      <tr><td>Road tax &amp; registration (TN)</td><td>${inr(sv.reg)}</td></tr>
+      <tr><td>Comprehensive insurance (1st year)</td><td>${inr(sv.ins)}</td></tr>
+      <tr><td>TCS (1% above ₹10 L)</td><td>${sv.tcs?inr(sv.tcs):'–'}</td></tr>
+      <tr><td>FASTag</td><td>${inr(FASTAG)}</td></tr>
+      <tr class="tot"><td>Mandatory on-road price</td><td>${inr(k.mand)}</td></tr>
+      ${addRows.map(r=>`<tr><td>${r[0]} (optional)</td><td>${r[1]?inr(r[1]):'–'}</td></tr>`).join('')}
+      <tr><td>Discount</td><td>${S.amt.disc?'− '+inr(S.amt.disc):'–'}</td></tr>
+      <tr><td>Typical dealer offer ${S.add.mkt?'(applied)':'(not applied)'}</td><td>${mktDisc(sv)?(S.add.mkt?'− ':'')+inr(mktDisc(sv)):'–'}</td></tr>
+      <tr class="fin"><td>Final payable</td><td>${inr(k.fin)}</td></tr>
+     </table>
+     <p class="note">${sv.est?'<span class="est">estimated</span> Tax and insurance for this variant are calculated from the pattern in Chennai quotes (≈13.35% up to ₹10 L, ≈18.3% above; insurance ≈5.75% / 4.95%).':'Tax and insurance for this variant are Chennai figures from CarDekho (Oct 2026) or a Chennai dealer quote.'}</p>
+     <div class="row2"><button class="btn pri" data-addv="1">+ Add this variant to Compare</button>${favBtn(sv)}</div></div>
+    <div class="panel"><h3>Best-value score: <span class="score">${sc(sv)}</span> / 100</h3>
+      ${Object.keys(W).map(w=>`<div class="sl"><span>${WLAB[w]}</span><div class="bar"><i style="width:${Math.round(p[w]*100)}%;background:${WCOL[w]}"></i></div><span class="mut">${Math.round(p[w]*100)}</span></div>`).join('')}
+      <p class="note">Weights can be changed in tab 3. Unknown items count as “average” (0.4), so unverified data never rewards a car.</p></div>
+    <div class="panel"><h3>Engine, mileage &amp; specs</h3>
+     <table>
+      <tr><td>Engine</td><td>${e[0]}</td></tr>
+      <tr><td>Power / torque</td><td>${e[1]!=null?e[1]+' PS':'–'} / ${e[2]!=null?e[2]+' Nm':'–'}</td></tr>
+      <tr><td>Transmission</td><td>${c.tx}</td></tr>
+      <tr><td>Gearbox upkeep</td><td>${o.gbx>0?'allowance '+inr(o.gbx)+' over '+U.years+' yr':'none'}<div class="mut">${gbxNote(sv)}</div></td></tr>
+      <tr><td>ARAI mileage (this variant)</td><td>${m.assumed?'–':fm(m.a,sv)}</td></tr>
+      <tr><td>City / highway (real-world)</td><td>${chTxt(sv)}</td></tr>
+      <tr><td>Your blended real-world (${U.city}% city)</td><td>${fm(o.rk,sv)}${m.assumed?' (assumed)':''}</td></tr>
+      <tr><td>Fuel cost per km</td><td>₹${o.fuelPerKm.toFixed(2)}</td></tr>
+      <tr><td>Body / seats</td><td>${c.body} · ${c.seats}</td></tr>
+      <tr><td>L × W × H · wheelbase</td><td>${c.dim.join(' × ')} mm · ${c.wb} mm</td></tr>
+      <tr><td>Boot · ground clearance</td><td>${(()=>{const b=bootOf(sv);return (b.l!=null?b.l+' L':'not published')+(b.alt?' <span class="est">'+FUEL_LBL[sv.fuel]+'</span>':'')})()} · ${dash(c.gc&&c.gc+' mm')}${bootOf(sv).alt?'<div class="mut">'+bootOf(sv).note+'</div>':''}</td></tr>
+      <tr><td>${c.batt?'Battery · claimed range':'Fuel tank'} · tyres</td><td>${c.batt?c.batt+' kWh · '+c.range+' km':c.tank+' L'} · ${c.tyre}</td></tr>
+      <tr><td>Waiting · usual offer</td><td>${dash(waitTxt(S.selCar))} · ${MARKET[S.selCar]&&MARKET[S.selCar].disc!=null?'up to '+inr(mktDisc(sv)):'–'}${MARKET[S.selCar]&&MARKET[S.selCar].note?'<div class="mut">'+MARKET[S.selCar].note+'</div>':''}</td></tr>
+      <tr><td>Crash test</td><td>${c.stars==null?'':'<b>'+stars(c.stars)+'</b> '}${c.ncap}</td></tr>
+      <tr><td>Warranty (verify)</td><td>${c.warr}</td></tr>
+     </table></div>
+    <div class="panel"><h3>${c.name} – pros, cons &amp; who it suits <span class="mut">(editorial view)</span></h3>
+     <b>Pros</b><ul class="pc">${c.pros.map(x=>`<li>${x}</li>`).join('')}</ul><b>Cons</b><ul class="pc">${c.cons.map(x=>`<li>${x}</li>`).join('')}</ul><p style="margin:0"><b>Best for:</b> ${c.who}</p></div>
+   </div></div>`;
+  d.querySelectorAll('tr.vr').forEach(r=>r.onclick=ev=>{if(ev.target.dataset.sl)return;S.selVar=+r.dataset.v;renderDetail();});
+  d.querySelectorAll('[data-sl]').forEach(b=>b.onclick=ev=>{ev.stopPropagation();toggleSL(V[+b.dataset.sl].key);renderDetail();renderCards();});
+  d.querySelectorAll('[data-addv]').forEach(b=>b.onclick=()=>addCompare(sv.car,sv.id));
+  d.querySelectorAll('[data-fav]').forEach(b=>b.onclick=()=>{toggleSL(sv.key);renderDetail();renderCards();});
+}
+/* same as the ★ on a variant row: adds the selected variant to (or removes it from) the favourites/shortlist */
+const favBtn=v=>SL.has(v.key)?`<button class="btn" data-fav="1" title="Remove from favourites">★ In favourites – remove</button>`:`<button class="btn" data-fav="1" title="Add to favourites (same as the ★ on the row)">☆ Add to favourites</button>`;
+function toggleSL(k){SL.has(k)?SL.delete(k):SL.add(k);persist();document.getElementById('slN').textContent=SL.size;}
+
+/* ============ COMPARE ============ */
+/* CMP holds any number of variant ids; its order is the column order, changed by drag and drop or ◀ ▶. */
+function cmpChanged(){persist();renderCompare();renderCost();}
+function addCompare(car,vid,stay){
+  if(vid==null){if(CMP.some(x=>V[x].car===car)){if(!stay)showTab('compare');return;}const g=VBY[car].filter(pass).sort(byFin);vid=(g[0]||[...VBY[car]].sort(byFin)[0]).id;}
+  if(NOEV&&V[vid].fuel==='EV'){if(!confirm('Electric cars are excluded in Compare / Best value. Include electric cars again?'))return;NOEV=false;}
+  if(!CMP.includes(vid))CMP.push(vid);cmpChanged();if(!stay)showTab('compare');
+}
+function moveCmp(from,to){if(from===to||from<0||to<0||from>=CMP.length||to>=CMP.length)return;const [x]=CMP.splice(from,1);CMP.splice(to,0,x);cmpChanged();}
+const carOpts=cur=>'<option value="">— choose car —</option>'+Object.keys(CARS).filter(k=>k===cur||!(NOEV&&isEVcar(k))).sort((a,b)=>CARS[a].name.localeCompare(CARS[b].name)).map(k=>`<option value="${k}" ${k===cur?'selected':''}>${CARS[k].name}</option>`).join('');
+function slotsHTML(){
+  return CMP.map((vid,i)=>{const v=V[vid];
+    const varOpts=VBY[v.car].filter(x=>!(NOEV&&x.fuel==='EV')||x.id===vid).sort(byFin).map(x=>`<option value="${x.id}" ${x.id===vid?'selected':''}>${esc(x.name)} · ${gbLbl(x)} · ${FUEL_LBL[x.fuel]} – ${lk(calc(x).fin)}</option>`).join('');
+    return `<div class="slot" data-drop="${i}"><div class="slothead"><span class="handle" draggable="true" data-drag="${i}" title="Drag to reorder">⠿</span><b>#${i+1}</b> <span class="mut">${sc(v)} pts</span>
+      <span class="sp"><button class="btn sm" data-mv="${i}" data-d="-1" title="Move left" ${i?'':'disabled'}>◀</button><button class="btn sm" data-mv="${i}" data-d="1" title="Move right" ${i<CMP.length-1?'':'disabled'}>▶</button><button class="btn sm" data-x="${i}" title="Remove">✕</button></span></div>
+      <select data-c="${i}">${carOpts(v.car)}</select><select data-vv="${i}">${varOpts}</select></div>`;}).join('')+
+    `<div class="slot add"><b>+ Add a car</b><select data-c="new">${carOpts('')}</select></div>`;
+}
+/* drag and drop between any [data-drag] source and [data-drop] target inside root (slots and table headings) */
+function bindDrag(root){
+  let from=null;
+  root.querySelectorAll('[data-drag]').forEach(h=>{
+    h.ondragstart=e=>{from=+h.dataset.drag;e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',String(from));}catch(_){}
+      const box=h.closest('[data-drop]');if(box){box.classList.add('dragging');if(box!==h&&e.dataTransfer.setDragImage)e.dataTransfer.setDragImage(box,20,20);}};
+    h.ondragend=()=>root.querySelectorAll('.dragging,.dropto').forEach(x=>x.classList.remove('dragging','dropto'));});
+  root.querySelectorAll('[data-drop]').forEach(t=>{
+    t.ondragover=e=>{if(from==null)return;e.preventDefault();t.classList.add('dropto');};
+    t.ondragleave=()=>t.classList.remove('dropto');
+    t.ondrop=e=>{e.preventDefault();const f=from;from=null;moveCmp(f,+t.dataset.drop);};});
+}
+function bindSlots(root){
+  root.querySelectorAll('[data-c]').forEach(s=>s.onchange=e=>{const k=e.target.value,i=e.target.dataset.c;if(!k)return;
+    const g=VBY[k].filter(pass).sort(byFin),id=(g[0]||[...VBY[k]].sort(byFin)[0]).id;
+    if(i==='new'){if(!CMP.includes(id))CMP.push(id);}else CMP[+i]=id;cmpChanged();});
+  root.querySelectorAll('[data-vv]').forEach(s=>s.onchange=e=>{CMP[+e.target.dataset.vv]=+e.target.value;cmpChanged();});
+  root.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{CMP.splice(+b.dataset.x,1);cmpChanged();});
+  root.querySelectorAll('[data-mv]').forEach(b=>b.onclick=()=>{const i=+b.dataset.mv;moveCmp(i,i+ +b.dataset.d);});
+  bindDrag(root);
+}
+/* variants that qualify for ranking: tab-1 filters, the EV switch and the Best-value gearbox choice */
+function rankList(){return V.filter(v=>pass(v)&&!(NOEV&&v.fuel==='EV')&&(bestGear==='any'||(bestGear==='auto')===(v.trans!=='MT'))).map(v=>({v,s:score(v),p:parts(v)})).sort((a,b)=>b.s-a.s);}
+function setNoEV(on){NOEV=on;if(on){for(let i=CMP.length-1;i>=0;i--)if(V[CMP[i]].fuel==='EV')CMP.splice(i,1);}persist();renderCompare();renderCost();
+  if(!document.getElementById('t-best').classList.contains('hidden'))renderBestRes();}
+let topN=5;
+function renderCmpTools(){
+  const el=document.getElementById('cmpTools'),favN=[...SL].filter(k=>VK.has(k)).length;
+  el.innerHTML=`<b>${CMP.length} variant${CMP.length===1?'':'s'} in comparison</b>
+   <label class="row" style="margin:0"><input type="checkbox" id="cNoEV" ${NOEV?'checked':''}> Exclude electric cars</label>
+   <span class="mut">Sort by</span><button class="btn sm" data-srt="score" ${CMP.length>1?'':'disabled'}>Best value</button><button class="btn sm" data-srt="fin" ${CMP.length>1?'':'disabled'}>Lowest price</button><button class="btn sm" data-srt="net" ${CMP.length>1?'':'disabled'}>Lowest ${U.years}-yr cost</button><button class="btn sm" data-srt="safe" ${CMP.length>1?'':'disabled'}>Safety</button>
+   <span class="mut">·</span><button class="btn sm" id="cTop">+ Add top</button><select id="cTopN">${[3,5,8,10].map(n=>`<option ${n===topN?'selected':''}>${n}</option>`).join('')}</select><span class="mut">best-value picks</span>
+   <button class="btn sm" id="cFav" ${favN?'':'disabled'}>+ Add my ★ favourites (${favN})</button>
+   <button class="btn sm" id="cClr" ${CMP.length?'':'disabled'}>Clear all</button>`;
+  const q=s=>el.querySelector(s);
+  q('#cNoEV').onchange=e=>setNoEV(e.target.checked);
+  const key={score:v=>-score(v),fin:v=>calc(v).fin,net:v=>own(v).net,safe:v=>-(CARS[v.car].stars==null?0:CARS[v.car].stars)-parts(v).safety/10};
+  el.querySelectorAll('[data-srt]').forEach(b=>b.onclick=()=>{const f=key[b.dataset.srt];CMP.sort((a,b)=>f(V[a])-f(V[b]));cmpChanged();});
+  q('#cTopN').onchange=e=>{topN=+e.target.value;};
+  q('#cTop').onclick=()=>{const have=new Set(CMP.map(i=>V[i].car));let n=0;
+    for(const x of rankList()){if(n>=topN)break;if(have.has(x.v.car))continue;have.add(x.v.car);CMP.push(x.v.id);n++;}
+    if(!n)alert('No more cars qualify – loosen the filters on tab 1.');cmpChanged();};
+  q('#cFav').onclick=()=>{[...SL].forEach(k=>{const v=VK.get(k);if(v&&!CMP.includes(v.id)&&!(NOEV&&v.fuel==='EV'))CMP.push(v.id);});cmpChanged();};
+  q('#cClr').onclick=()=>{if(confirm('Remove all '+CMP.length+' variants from the comparison?')){CMP.length=0;cmpChanged();}};
+}
+/* score weights – the same W used by the Best-value tab, editable here too */
+function weightsHTML(){const tw=Object.values(W).reduce((a,b)=>a+b,0)||1;
+  return `<div class="preset">${Object.keys(PRESETS).map(p=>`<button class="btn sm" data-pre="${p}">${p}</button>`).join('')}</div>
+    ${Object.keys(W).map(w=>`<div class="sl"><span>${WLAB[w]}</span><input type="range" min="0" max="50" step="1" value="${W[w]}" data-w="${w}"><span class="val" data-wv="${w}" style="float:none">${Math.round(100*W[w]/tw)}%</span></div>`).join('')}`;}
+function bindWeights(box,onPreset,onSlide){
+  box.querySelectorAll('[data-pre]').forEach(b=>b.onclick=()=>{Object.assign(W,PRESETS[b.dataset.pre]);persist();onPreset();});
+  box.querySelectorAll('[data-w]').forEach(r=>r.oninput=e=>{W[e.target.dataset.w]=+e.target.value;persist();const t=Object.values(W).reduce((a,b)=>a+b,0)||1;
+    box.querySelectorAll('[data-wv]').forEach(el=>el.textContent=Math.round(100*W[el.dataset.wv]/t)+'%');onSlide();});
+}
+let cmpWOpen=false;
+function renderCmpWeights(){
+  const box=document.getElementById('cmpWBox');
+  box.innerHTML=`<details class="wbox" ${cmpWOpen?'open':''}><summary>⚖ What matters to you? Edit the best-value score weights</summary>
+    <p class="mut">The score in the table blends these eight things. Changes here also apply to tab 3 (Best value for me) and the cards.</p>
+    <div style="max-width:620px">${weightsHTML()}</div></details>`;
+  box.querySelector('details').ontoggle=e=>{cmpWOpen=e.target.open;};
+  bindWeights(box,()=>{renderCmpWeights();renderCmpTable();renderSlotsOnly();renderCards();renderDetail();},
+    ()=>{clearTimeout(renderCmpWeights._t);renderCmpWeights._t=setTimeout(()=>{renderCmpTable();renderSlotsOnly();renderCards();renderDetail();},150);});
+}
+function renderSlotsOnly(){const sl=document.getElementById('slots');sl.innerHTML=slotsHTML();bindSlots(sl);}
+function renderCompare(){
+  document.getElementById('cmpN').textContent=CMP.length;
+  renderCmpTools();renderSlotsOnly();renderCmpWeights();renderCmpTable();
+}
+function renderCmpTable(){
+  const sel=CMP.map(vid=>({v:V[vid],c:CARS[V[vid].car],k:calc(V[vid]),o:own(V[vid])}));
+  const t=document.getElementById('cmpTbl');
+  if(!sel.length){t.innerHTML='<tr><td class="empty">Add cars with “+ Add a car” above, “+ Add top best-value picks”, or “+ Compare” on any car – as many as you like – to compare every price line, mileage, running cost, spec and feature side by side.</td></tr>';return;}
+  const numRow=(label,fn,fmt,best)=>{
+    const vals=sel.map(fn);const nums=vals.filter(x=>x!=null);
+    const target=nums.length>1&&best?(best==='min'?Math.min(...nums):Math.max(...nums)):null;
+    return `<tr><td>${label}</td>${sel.map((s,i)=>`<td class="${target!=null&&vals[i]===target?'best':''}">${vals[i]==null?'–':fmt(vals[i],s)}</td>`).join('')}</tr>`;};
+  const txt=(label,fn)=>`<tr><td>${label}</td>${sel.map(s=>`<td>${dash(fn(s))}</td>`).join('')}</tr>`;
+  const cat=n=>`<tr class="cat"><td colspan="${sel.length+1}">${n}</td></tr>`;
+  let h=`<tr><th>Car <span class="mut">(drag headings to reorder)</span></th>${sel.map((s,i)=>`<th draggable="true" data-drag="${i}" data-drop="${i}" title="Drag to reorder">⠿ #${i+1} ${s.c.name}</th>`).join('')}</tr>`;
+  h+=`<tr><td>Picture <span class="mut">(tap a colour below)</span></td>${sel.map(s=>`<td><div class="thumb">${carImg(s.v.car)}</div></td>`).join('')}</tr>`;
+  h+=`<tr><td>Colours</td>${sel.map(s=>`<td>${MEDIA[s.v.car]?`<div class="dots">${dotsHTML(s.v.car,true,20)}</div><div class="mut">${MEDIA[s.v.car].col.length} colours</div>`:'–'}</td>`).join('')}</tr>`;
+  h+=`<tr><td>Official site &amp; 360° view</td>${sel.map(s=>`<td><div class="dots">${linksHTML(s.v.car)}</div></td>`).join('')}</tr>`;
+  h+=txt('Variant',s=>`${s.v.name} (${gbLbl(s.v)})`)+txt('Fuel',s=>FUEL_LBL[s.v.fuel])+txt('Body / seats',s=>`${s.c.body} · ${s.c.seats}`);
+  h+=numRow('<b>Best-value score (0–100)</b>',s=>sc(s.v),x=>`<span class="score">${x}</span>`,'max');
+  h+=cat('Best-value score breakdown (each 0–100; weights above)')+Object.keys(W).map(w=>numRow(`${WLAB[w]} <span class="mut">· weight ${W[w]}</span>`,s=>Math.round(parts(s.v)[w]*100),x=>x,'max')).join('');
+  h+=cat('Price (Chennai on-road)')+numRow('Ex-showroom',s=>s.v.ex,inr,'min')+numRow('Road tax & registration',s=>s.v.reg,inr,'min')+numRow('Insurance (1st year)',s=>s.v.ins,inr,'min')+numRow('TCS',s=>s.v.tcs,x=>x?inr(x):'–',null)+numRow('FASTag',()=>FASTAG,inr,null)+
+    numRow('Mandatory on-road',s=>s.k.mand,inr,'min')+numRow('Add-ons selected',s=>s.k.add,x=>x?inr(x):'–',null)+numRow('Final payable',s=>s.k.fin,inr,'min')+
+    numRow('Under ₹15 L?',s=>s.k.basis,x=>x<=1500000?'✔ Yes':'✘ No ('+lk(x-1500000)+' over)',null);
+  h+=cat('Mileage & running cost')+numRow('ARAI mileage',s=>arai(s.v),(x,s)=>x.toFixed(1)+' '+unitOf(s.v),'max')+
+    numRow('Real-world city mileage',s=>{const m=cityHwy(s.v);return m==null?null:m.c;},(x,s)=>x.toFixed(1)+' '+unitOf(s.v),'max')+
+    numRow('Real-world highway mileage',s=>{const m=cityHwy(s.v);return m==null?null:m.h;},(x,s)=>x.toFixed(1)+' '+unitOf(s.v),'max')+
+    numRow('Fuel cost per km (your usage)',s=>s.o.fuelPerKm,x=>'₹'+x.toFixed(2),'min')+
+    numRow(`Fuel, ${U.years} yr`,s=>s.o.fuel,inr,'min')+numRow(`Service, ${U.years} yr`,s=>s.o.svc,inr,'min')+numRow('Insurance renewals',s=>s.o.ins,inr,'min')+numRow('Tyres',s=>s.o.tyres,inr,'min')+
+    numRow('Resale value after '+U.years+' yr (est.)',s=>s.o.resale,inr,'max')+numRow(`Net ${U.years}-yr ownership cost`,s=>s.o.net,inr,'min')+numRow('Net cost per km',s=>s.o.perKm,x=>'₹'+x.toFixed(2),'min');
+  h+=cat('Engine & dimensions')+txt('Engine',s=>engOf(s.v)[0])+numRow('Power (PS)',s=>engOf(s.v)[1],x=>x,'max')+numRow('Torque (Nm)',s=>engOf(s.v)[2],x=>x,'max')+txt('Transmission',s=>s.c.tx)+
+    txt('Gearbox upkeep (5-yr allowance)',s=>(own(s.v).gbx>0?inr(own(s.v).gbx)+' – ':'')+gbxNote(s.v))+numRow('Boot space (L)',s=>bootOf(s.v).l,(x,s)=>x+(bootOf(s.v).alt?' ('+FUEL_LBL[s.v.fuel]+')':''),'max')+numRow('Ground clearance (mm)',s=>s.c.gc,x=>x,'max')+numRow('Wheelbase (mm)',s=>s.c.wb,x=>x,'max')+txt('Length × width × height (mm)',s=>s.c.dim.join(' × '))+txt('Fuel tank / battery',s=>s.c.batt?s.c.batt+' kWh, '+s.c.range+' km claimed':s.c.tank+' L')+txt('Waiting time',s=>dash(waitTxt(s.v.car)))+numRow('Typical dealer offer (₹)',s=>mktDisc(s.v)||null,x=>inr(x),'max')+txt('Tyres',s=>s.c.tyre)+
+    txt('Crash test',s=>(s.c.stars==null?'':stars(s.c.stars)+' · ')+s.c.ncap)+txt('Warranty (verify)',s=>s.c.warr)+txt('FY26 sales (India)',s=>s.c.fy26);
+  for(const [g,list] of FEATS){
+    h+=cat(g+' – features');
+    for(const [k,label,kind] of list){
+      h+=`<tr><td>${label}</td>${sel.map(s=>{const e=feat(s.v,k);
+        if(e.st===null)return '<td class="unk">–</td>';
+        if(kind==='b')return e.st?'<td class="yes">✔</td>':'<td class="no">✘</td>';
+        return e.st?`<td class="yes">${e.text}</td>`:'<td class="no">✘</td>';}).join('')}</tr>`;
+    }
+  }
+  h+=`<tr><td>Videos</td>${sel.map(s=>`<td><a href="videos.html?car=${s.v.car}">▶ Open videos</a></td>`).join('')}</tr>`;
+  t.innerHTML=h;bindDrag(t);
+}
+
+/* ============ BEST VALUE TAB ============ */
+const PRESETS={
+ 'Balanced':{price:15,own:20,safety:20,feat:20,space:10,perf:10,eff:5,ease:10},
+ 'Lowest cost':{price:25,own:35,safety:10,feat:10,space:5,perf:0,eff:15,ease:0},
+ 'Safety first':{price:10,own:10,safety:45,feat:15,space:10,perf:5,eff:5,ease:5},
+ 'Feature loaded':{price:10,own:10,safety:15,feat:45,space:10,perf:5,eff:5,ease:10},
+ 'Family space':{price:10,own:15,safety:25,feat:10,space:35,perf:5,eff:0,ease:10},
+ 'Highway & power':{price:10,own:10,safety:20,feat:15,space:10,perf:30,eff:5,ease:5}};
+let bestPer=true,bestN=15,bestGear='any';
+function usageHTML(){
+  const n=(id,k,w=80,step=1)=>`<input type="number" id="${id}" value="${U[k]}" step="${step}" style="width:${w}px">`;
+  return `<div class="row">Driving <b>${n('uKm','kmMonth',70,100)}</b> km/month · city share <b>${n('uCity','city',55)}</b>% · keep for <b>${n('uYears','years',50)}</b> years</div>
+  <div class="row">Chennai fuel prices (11 Oct 2026): petrol ₹${n('uPP','pP',70,.1)} · diesel ₹${n('uPD','pD',70,.1)} · CNG ₹${n('uPC','pC',70,.1)}/kg · electricity ₹${n('uPE','pE',50,.5)}/kWh (home ≈₹7–9, public fast charging ≈₹18–25) · fuel inflation ${n('uInf','infl',50,.5)}%/yr</div>
+  <label class="row"><input type="checkbox" id="uRes" ${U.resaleOn?'checked':''}> Subtract estimated resale value at the end</label>`;
+}
+function bindUsage(root){
+  const map={uKm:'kmMonth',uCity:'city',uYears:'years',uPP:'pP',uPD:'pD',uPC:'pC',uPE:'pE',uInf:'infl'};
+  for(const id in map){const el=root.querySelector('#'+id);if(el)el.onchange=e=>{U[map[id]]=+e.target.value||0;if(id==='uCity')U.city=Math.min(100,Math.max(0,U.city));if(id==='uYears')U.years=Math.min(10,Math.max(1,Math.round(U.years)));touch();persist();renderAll(false);};}
+  const r=root.querySelector('#uRes');if(r)r.onchange=e=>{U.resaleOn=e.target.checked;touch();persist();renderAll(false);};
+}
+function bestResHTML(){
+  const list=rankList();
+  let rows=list;
+  if(bestPer){const seen=new Set();rows=list.filter(x=>{if(seen.has(x.v.car))return false;seen.add(x.v.car);return true;});}
+  rows=rows.slice(0,bestN);
+  const tw=Object.values(W).reduce((a,b)=>a+b,0)||1;
+  return `<div class="row"><h2 style="margin:0">Top picks for you</h2> <span class="mut">(${list.length} variants qualify)</span>
+   <label><input type="checkbox" id="bPer" ${bestPer?'checked':''}> best variant per car</label>
+   <label><input type="checkbox" id="bNoEV" ${NOEV?'checked':''}> exclude electric cars</label>
+   <span class="mut">gearbox</span><select id="bGear"><option value="any" ${bestGear==='any'?'selected':''}>Any</option><option value="auto" ${bestGear==='auto'?'selected':''}>Automatic only (AMT/AT/DCT/iMT)</option><option value="mt" ${bestGear==='mt'?'selected':''}>Manual only</option></select>
+   <span class="mut">show</span><select id="bN">${[10,15,25,50].map(n=>`<option ${n===bestN?'selected':''}>${n}</option>`).join('')}</select></div>
+   <div class="legend">${Object.keys(W).map(w=>`<span><b style="background:${WCOL[w]}"></b>${WLAB[w]}</span>`).join('')}</div>
+   <div class="scroll" style="max-height:none"><table><thead><tr><th>#</th><th>Car · variant</th><th class="n">On-road</th><th class="n">${U.years}-yr net cost</th><th class="n">Fuel ₹/km</th><th>Safety</th><th class="n">Score</th><th style="min-width:160px">Why (contribution)</th><th></th></tr></thead><tbody>
+   ${rows.map((x,i)=>{const v=x.v,o=own(v),c=CARS[v.car];
+     return `<tr><td>${i+1}</td><td><b>${c.name}</b> ${v.name}<div class="mut">${FUEL_LBL[v.fuel]} · ${gbLbl(v)}${v.est?' · <span class="est">est.</span>':''}</div></td>
+     <td class="n">${inr(o.k.fin)}</td><td class="n">${lk(o.net)}</td><td class="n">₹${o.fuelPerKm.toFixed(2)}</td><td>${stars(c.stars)}</td><td class="n"><span class="score">${Math.round(x.s)}</span></td>
+     <td><div class="bar">${Object.keys(W).map(w=>`<i title="${WLAB[w]} ${Math.round(100*W[w]*x.p[w]/tw)} pts" style="width:${100*W[w]*x.p[w]/tw}%;background:${WCOL[w]}"></i>`).join('')}</div></td>
+     <td style="white-space:nowrap"><button class="star ${SL.has(v.key)?'on':''}" data-sl2="${v.id}" title="Add/remove favourite">★</button> <button class="btn sm" data-cmp2="${v.id}">+ Compare</button></td></tr>`;}).join('')||'<tr><td colspan="9" class="empty">Nothing matches the filters.</td></tr>'}
+   </tbody></table></div>
+   <p class="note">A high score is a good starting shortlist, not a verdict. Always test-drive the top 2–3 and get a written on-road quote.</p>`;
+}
+function renderBestRes(){
+  const el=document.getElementById('bestRes');if(!el)return;
+  el.innerHTML=bestResHTML();
+  el.querySelector('#bPer').onchange=e=>{bestPer=e.target.checked;renderBestRes();};
+  el.querySelector('#bGear').onchange=e=>{bestGear=e.target.value;renderBestRes();};
+  el.querySelector('#bN').onchange=e=>{bestN=+e.target.value;renderBestRes();};
+  el.querySelector('#bNoEV').onchange=e=>setNoEV(e.target.checked);
+  bindBestRows(el);
+}
+function renderBest(){
+  const box=document.getElementById('bestBox');
+  const tw=Object.values(W).reduce((a,b)=>a+b,0)||1;
+  box.innerHTML=`
+  <div class="grid2">
+   <div class="panel"><h2>What matters to you?</h2>
+    <p class="mut" style="margin-top:0">The score blends eight things, each scaled 0–1 across all ${V.length} variants. Move the sliders to match your priorities, or pick a preset.</p>
+    ${weightsHTML()}
+    <p class="note"><b>How each part is scored.</b> Price: lower final on-road is better. Ownership: ${U.years}-yr net cost (fuel + service + insurance + tyres − resale). Safety: crash-test stars 62%, airbags 14%, ADAS 14%, cameras 10%. Features: weighted share of the ${Object.keys(FDEF).length} tracked features the variant has. Space: boot, clearance, wheelbase, 7-seat bonus. Performance: power and torque. Fuel cost per km at your driving mix. Driving ease: manual 0, iMT 0.3, AMT 0.55, dual-clutch 0.8–0.85, torque-converter automatic and hybrid 1 – raise it if you drive in stop-go traffic or share the car; automatics also carry a gearbox upkeep allowance in the cost figures.</p></div>
+   <div class="panel"><h2>Your usage</h2>${usageHTML()}
+    <p class="note">These numbers drive the running-cost, ownership-cost and fuel-cost parts of the score (and tab 4). Change them to match your own driving – a 40 km/day city commuter and a 120 km/day highway driver get very different winners.</p>
+    <h3 style="margin-top:12px">Filters in force</h3><p class="mut" style="margin:0">The ranking uses the filters on tab 1 (price cap ${lk(S.maxPrice)}, fuel, gearbox, must-have features, etc.).</p></div>
+  </div>
+  <div class="panel" id="bestRes"></div>`;
+  bindUsage(box);
+  bindWeights(box,()=>{renderBest();renderCards();renderDetail();renderCompare();},
+    ()=>{renderBestRes();clearTimeout(renderBest._t);renderBest._t=setTimeout(()=>{renderCards();renderDetail();renderCompare();},250);});
+  renderBestRes();
+}
+function bindBestRows(box){
+  box.querySelectorAll('[data-sl2]').forEach(b=>b.onclick=()=>{toggleSL(V[+b.dataset.sl2].key);b.classList.toggle('on');renderCards();});
+  box.querySelectorAll('[data-cmp2]').forEach(b=>b.onclick=()=>{const v=V[+b.dataset.cmp2];addCompare(v.car,v.id,true);b.textContent="✔ In compare";});
+}
+
+/* ============ COST + EMI TAB ============ */
+function emi(P,rate,years){const r=rate/1200,n=years*12;if(P<=0)return {emi:0,total:0,interest:0};if(!r)return {emi:P/n,total:P,interest:0};const e=P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);return {emi:e,total:e*n,interest:e*n-P};}
+function renderCost(){
+  const box=document.getElementById('costBox');
+  const sel=CMP.map(vid=>vid!=null?{v:V[vid],c:CARS[V[vid].car],o:own(V[vid])}:null);
+  const have=sel.filter(Boolean);
+  const comps=[['Purchase (on-road)','price','var(--bar1)'],['Fuel','fuel','var(--bar2)'],['Service','svc','var(--bar3)'],['Insurance renewals','ins','var(--bar5)'],['Tyres','tyres','#8a8f98']];
+  const val=(s,k)=>k==='price'?s.o.k.fin:s.o[k];
+  let chart='';
+  if(have.length){
+    const mx=Math.max(...have.map(s=>comps.reduce((a,[,k])=>a+val(s,k),0)));
+    chart=`<div class="svgbox"><svg viewBox="0 0 760 ${have.length*58+10}" role="img" aria-label="Stacked bar of total outgo per car">${have.map((s,i)=>{let x=150;const y=i*58+8;
+      let g=`<text x="0" y="${y+16}" font-size="12" fill="currentColor">${s.c.name.replace(/^(Maruti|Tata|Hyundai|Kia|Skoda|Mahindra) /,'')}</text><text x="0" y="${y+32}" font-size="11" fill="currentColor" opacity=".7">${s.v.name}</text>`;
+      comps.forEach(([,k,col])=>{const w=val(s,k)/mx*470;g+=`<rect x="${x}" y="${y}" width="${w}" height="26" fill="${col}"><title>${k}: ${inr(val(s,k))}</title></rect>`;x+=w;});
+      g+=`<text x="${x+6}" y="${y+17}" font-size="12" font-weight="700" fill="currentColor">${lk(comps.reduce((a,[,k])=>a+val(s,k),0))}</text>`;return g;}).join('')}</svg></div>
+      <div class="legend">${comps.map(([l,,c])=>`<span><b style="background:${c}"></b>${l}</span>`).join('')}<span>(resale value is subtracted in the table below)</span></div>`;
+  }
+  const loanRows=have.map(s=>{const fin=s.o.k.fin,down=fin*U.downPct/100,P=fin-down,e=emi(P,U.rate,U.tenure);return {s,fin,down,P,e};});
+  box.innerHTML=`
+  <div class="panel"><h2>Running cost of the cars in your comparison <span class="mut">(reorder or add more in tab 2)</span></h2>
+   <div class="slots">${slotsHTML()}</div>
+   ${usageHTML()}
+   ${have.length?chart+`<div style="overflow-x:auto"><table class="cmp"><tr><th>${U.years}-year cost (${U.kmMonth*12*U.years} km)</th>${have.map(s=>`<th>${s.c.name}<br><span class="mut">${s.v.name}</span></th>`).join('')}</tr>
+    ${[['Final payable (on-road)','k.fin'],['Fuel','fuel'],['Service &amp; maintenance','svc'],['Insurance renewals (yr 2 onward)','ins'],['Tyre replacement','tyres'],['Total running cost','running'],['− Estimated resale value','resale'],['Net cost of ownership','net']].map(([l,k])=>{
+      const vals=have.map(s=>k==='k.fin'?s.o.k.fin:s.o[k]);const best=['running','net','fuel','svc','ins','tyres'].includes(k)?Math.min(...vals):null;
+      return `<tr><td>${l}</td>${vals.map(x=>`<td class="${best!=null&&x===best&&have.length>1?'best':''}" ${k==='net'?'style="font-weight:700"':''}>${k==='resale'?'− ':''}${inr(x)}</td>`).join('')}</tr>`;}).join('')}
+    <tr><td>Net cost per km</td>${have.map(s=>`<td>₹${s.o.perKm.toFixed(2)}</td>`).join('')}</tr>
+    <tr><td>Net cost per month</td>${have.map(s=>`<td>${inr(s.o.net/(U.years*12))}</td>`).join('')}</tr>
+    <tr><td>Fuel cost per km</td>${have.map(s=>`<td>₹${s.o.fuelPerKm.toFixed(2)} <span class="mut">(${fm(s.o.rk,s.v)}${mil(s.v).assumed?', assumed':''})</span></td>`).join('')}</tr>
+    <tr><td>Service interval / note</td>${have.map(s=>`<td class="mut">${s.c.warr}</td>`).join('')}</tr></table></div>`:'<p class="empty">Pick variants in the slots above to see their running cost.</p>'}
+   <p class="note">Estimates, not quotes. Fuel uses your city/highway mix on owner-calibrated mileage (ARAI × 67%/82% where none); service uses 5-year schedules from v3cars/Spinny (see tab 5) scaled for your km, plus a gearbox upkeep allowance for automatics (an expected value, not a quote); insurance renewals use depreciating IDV, NCB and the IRDAI third-party premium + 18% GST from year 4; tyres every 40,000 km; resale is a rule-of-thumb % of ex-showroom.</p></div>
+  <div class="panel"><h2>EMI calculator</h2>
+   <div class="row">Down payment <input type="number" id="eDown" value="${U.downPct}" style="width:60px">% · interest <input type="number" id="eRate" value="${U.rate}" step=".1" style="width:60px">% p.a. · tenure <input type="number" id="eTen" value="${U.tenure}" style="width:50px"> years</div>
+   ${have.length?`<div style="overflow-x:auto"><table class="cmp"><tr><th>Loan</th>${loanRows.map(l=>`<th>${l.s.c.name} ${l.s.v.name}</th>`).join('')}</tr>
+    <tr><td>Final payable</td>${loanRows.map(l=>`<td>${inr(l.fin)}</td>`).join('')}</tr>
+    <tr><td>Down payment</td>${loanRows.map(l=>`<td>${inr(l.down)}</td>`).join('')}</tr>
+    <tr><td>Loan amount</td>${loanRows.map(l=>`<td>${inr(l.P)}</td>`).join('')}</tr>
+    <tr><td><b>Monthly EMI</b></td>${loanRows.map(l=>`<td><b>${inr(l.e.emi)}</b></td>`).join('')}</tr>
+    <tr><td>Total interest</td>${loanRows.map(l=>`<td>${inr(l.e.interest)}</td>`).join('')}</tr>
+    <tr><td>EMI + fuel + service per month</td>${loanRows.map(l=>`<td>${inr(l.e.emi+(l.s.o.fuel+l.s.o.svc)/(U.years*12))}</td>`).join('')}</tr></table></div>`:'<p class="empty">Choose a variant above.</p>'}
+   <p class="note">Check that the EMI plus fuel and service stays under about 15–20% of your take-home pay. Ask for the loan’s processing fee and pre-closure charges in writing.</p></div>`;
+  const sl=box.querySelector('.slots');bindSlots(sl);bindUsage(box);
+  [['eDown','downPct'],['eRate','rate'],['eTen','tenure']].forEach(([id,k])=>{box.querySelector('#'+id).onchange=e=>{U[k]=+e.target.value||0;persist();renderCost();};});
+}
+
+/* ============ NOTES TAB ============ */
+function renderNotes(){
+  const rows=Object.keys(CARS).map(id=>{const c=CARS[id];return `<tr><td>${c.name}</td><td class="n">${inr(c.svc5)}</td><td>${c.svcSrc}</td><td class="n">${c.resale5}%</td><td>${c.warr}</td><td>${c.conf==='good'?'good':'partial'}</td></tr>`;}).join('');
+  const gbxRows=Object.keys(GBX_NOTE).map(k=>`<tr><td>${k}</td><td>${GBX_NOTE[k]}</td></tr>`).join('');
+  document.getElementById('notesBox').innerHTML=`
+  <div class="grid2">
+  <div class="panel" style="grid-column:1/-1"><h2>November 2026 update – what changed and how sure we are</h2><ul class="pc">
+   <li><b>Data file:</b> all car data now lives in <code>data.js</code> next to this page (last updated ${DATA_UPDATED}). Edit it to update prices, offers or specs; no other file needs changing.</li>
+   <li><b>Electric cars:</b> 15 EVs added (Tiago EV, Punch EV, Nexon EV, Curvv EV, Harrier EV, Creta Electric, e Vitara, XUV 3XO EV, BE 6, XEV 9e, Windsor, Comet, ZS EV, Carens Clavis EV, eC3). ${EV_NOTE} Running cost uses your electricity price (tab 3/4) and real-world range: about 80% of the claimed km/kWh in town and 66% on the highway, or a published range test where one exists. Battery-rental (BaaS) prices are not used.</li>
+   <li><b>Feature data:</b> the 56 cars that had gaps were re-researched variant by variant on Autocar India and CarWale (plus Cars24, Spinny, CarOnPhone where useful) in Nov 2026. A feature was filled only when the sources agreed; conflicting or single-source items are left as unknown. Coverage per car is shown as “data %” on each card; use the Data quality filter to hide thinly covered cars.</li>
+   <li><b>Safety:</b> ratings added or corrected for 17 cars from Bharat NCAP / Global NCAP. Bharat NCAP stars are derived from the published points (adult ≥27/32 = 5★, ≥22 = 4★; child ≥41/49 = 5★, ≥35 = 4★). Ratings for an older generation are described in the text but not used as stars.</li>
+   <li><b>Real-world mileage:</b> owner-reported figures (CarWale “user reported mileage”) now cover 47 petrol/diesel/CNG cars, plus range tests for 9 EVs. These are single-site averages with no sample size, so treat them as a guide.</li>
+   <li><b>Running costs:</b> 5-year service totals were found for 8 more cars (CarDekho service tables); most others are still marked ESTIMATE. No reliable 5-year resale figures were found, so resale percentages remain estimates.</li>
+   <li><b>Offers &amp; waiting:</b> typical dealer offers are ${MARKET_ASOF}; source: ${MARKET_SRC}. Waiting times are published only for Maruti (Chennai). Both change monthly – always confirm with the dealer. Tick “Subtract each car’s typical dealer offer” in the filters to see prices after offers.</li>
+   <li><b>Discontinued / renamed:</b> Tata Tigor (replaced by Tata Aeris) and Hyundai Tucson (delisted Nov 2025) are labelled discontinued; the XUV700 is now sold as the XUV 7XO – its variant names and prices here are from the XUV700 list and may be out of date.</li>
+   <li><b>Pictures, colours &amp; 360° views:</b> every car shows a photo and its full colour list (tap a swatch to change the photo). Colour names, swatches and photos come from CarWale’s colour pages (${MEDIA_ASOF}), because the makers’ own colour pickers load by script and could not be read. “Official website” opens the maker’s model page; “360° view – official site” opens the maker’s own 360° viewer for Maruti (Arena/Nexa) and Kia, where a direct link exists; for other brands the 360° button opens CarWale’s viewer. Makers do not offer a 360° page per variant – choose the variant and colour inside their configurator. Tata’s sites had an expired security certificate when checked, so Tata links are unverified.</li>
+   <li><b>Your filters are remembered</b> on this device, and “🔗 Copy link to this search” in the header gives a link that reopens the same filters.</li></ul></div><div>
+  <div class="panel"><h2>How the price is built</h2>
+   <p>Same lines as a Chennai dealer’s booking form: <b>ex-showroom + road tax &amp; registration + comprehensive insurance (+ TCS above ₹10 L) + FASTag</b> = mandatory on-road. Dealer extras (extended warranty, accessories, essential kit) and a discount are optional inputs on tab 1. Example, Hyundai Venue HX5+ 1.2 MT: ₹9,99,900 + ₹1,33,237 + ₹58,741 + ₹500 = ₹11,92,378 mandatory on-road.</p></div>
+  <div class="panel"><h2>Data quality – read this</h2><ul class="pc">
+   <li><b>Exact prices (no tag):</b> Chennai ex-showroom, registration and insurance figures taken from CarDekho’s Chennai price pages (Oct 2026) for the original 15 cars and for i20, Exter, Verna, Hyryder, Aura, Nios, Taisor, Glanza, Rumion, Seltos, Carens, Syros, Amaze, City, Elevate, Tigor, Altroz, Curvv, Virtus, Taigun, Slavia, Kushaq, Kiger, Magnite, Triber, C3, Basalt, Grand Vitara, XL6, Celerio, Alto K10 and Clavis (where a row carries no tag). CarDekho’s extra “Optional” charge is <i>not</i> included – use the add-on boxes instead.</li>
+   <li><b><span class="est">est.</span> prices:</b> rows tagged est. (Tiago, Tigor, Elevate and a few others, plus Ertiga and Wagon R) use a list ex-showroom price plus a formula for tax and insurance (±₹few thousand).</li>
+   <li><b>Coverage:</b> 71 cars, about 1,100 variants, including the big SUVs/MPVs added last (Alcazar, Tucson, Fortuner, Innova Crysta/Hycross, Hilux, Scorpio N/Classic, XUV700, Thar/Roxx, Harrier, Safari, Hector, Astor, Jimny, Invicto, Bolero Neo, Carnival, Kodiaq, Compass, Meridian, Aircross). The ₹15 L filter is only the default – raise the price slider (now up to ₹75 L) and rows above ₹15 L show a red “&gt; ₹15 L” flag. <b>Incomplete lists:</b> Harrier and Safari show only the first ~30 of ~58–59 variants (CarDekho page truncated); XUV700 omits AX7 L/top AWD trims and mixes older listings; Hilux lists only 3 automatics (no manual); Fortuner/Tucson price pages show two price sets (older ones skipped). Nexon shows the ~45 lowest-priced of 66 variants. Creta diesel automatic labelling on SX Premium/King Diesel is inferred from price. EVs are not included. Still not added: Hyundai Ioniq 5, Toyota Camry/Vellfire, Skoda Octavia, VW Tiguan, Honda CR-V and other low-volume imports.</li>
+   <li><b>Newly added 56 cars – how complete the details are:</b> prices are from CarDekho Chennai pages (rows priced for other cities are skipped). Feature lists for these cars are filled from my own knowledge of each model and trim ladder, not from a checked spec sheet, and cover roughly 40–60% of the ~45 features per car; features I was not sure about are left as “–” (unknown) rather than guessed. Specs (size, boot, tank, power, ARAI mileage), service cost and resale are also estimates (marked “partial”). Treat these as indicative and confirm the feature you care about with the dealer. The Punch and XUV 3XO data remain the most carefully checked.</li>
+   <li><b>Mileage:</b> ARAI figures from CarDekho/CarWale/Autocar (Sonet approximate). For 13 of the original 15 cars the city/highway split is now <b>calibrated to owner-reported mileage</b> from CarWale (tagged <span class="ok">owner</span>); where no owner figure exists it falls back to ≈67% / 82% of ARAI (tagged <span class="est">est.</span>). Owner figures are individual reviews, some from one owner only (e.g. Victoris hybrid ≈18 km/l, Kylaq AT), and are capped at 55–95% of ARAI to limit outliers. Brezza has no usable owner data. “–” = no figure; running cost then assumes a typical value (“assumed”).</li>
+   <li><b>Features:</b> trim-by-trim lists compiled from variant guides and top-variant spec sheets (Autocar, CarDekho, Gaadify, 91wheels, Spinny, Caronphone, SmartPrix, Hyundai). About 97% of the feature cells are now filled; the rest show “–” because no source confirmed them (mainly: Fronx TPMS/rear armrest/drive modes/ambient light, Venue rain-sensing wipers/DRL/audio, Ertiga and Wagon R USB-C, Kylaq front sensors, Punch rear sensors/split seat). Where a feature is marked ✘ it means a source lists it as absent or it is clearly not fitted in that segment (e.g. HUD or ventilated seats on a Wagon R). Guides sometimes disagree or lag a facelift – the Creta E/EX and Sonet entries come from older spec sheets, so treat those as indicative. 6 airbags are standard on all 2026 Maruti/Tata/Hyundai/Kia/Skoda/Mahindra cars here. Older Global NCAP results (Creta, Ertiga, Wagon R) were on earlier, lower-spec versions.</li>
+   <li><b>CNG boot space:</b> CNG variants now use their own boot figure where one is published (Punch 210 L, Nexon ≈312 L, XUV 3XO 270 L, Brezza 328 L, Victoris 439 L, Ertiga ≈100 L with the third row up). For Dzire, Swift, Baleno, Fronx and Wagon R CNG the tank sits in the boot but Maruti publishes no litres, so the app shows “not published” and leaves boot out of their space score. Expect a big loss on those. Victoris strong-hybrid boot is not confirmed.</li>
+   <li><b>Fuel prices</b> are Chennai’s 11 Oct 2026 rates (petrol ₹107.76, diesel ₹99.55, CNG ₹99.5/kg) – edit them on tab 3.</li>
+   <li>Offers, waiting periods and dealer charges change weekly. Always get a written, itemised on-road quote from the dealer.</li></ul></div>
+  <div class="panel"><h2>Automatic vs manual: gearbox issues</h2><p class="mut">Allowances are expected-cost estimates from owner reports (Team-BHP, Autocar), not quotes. Manual = ₹0.</p><div class="scroll" style="max-height:340px"><table><thead><tr><th>Type</th><th>What owners report</th></tr></thead><tbody>${gbxRows}</tbody></table></div></div>
+  <div class="panel"><h2>Service &amp; ownership assumptions</h2>
+   <div class="scroll" style="max-height:420px"><table><thead><tr><th>Car</th><th class="n">5-yr service (≈10k km/yr)</th><th>Source</th><th class="n">Resale after 5 yr</th><th>Warranty (verify)</th><th>Feature data</th></tr></thead><tbody>${rows}</tbody></table></div>
+   <p class="note">Service totals are published or estimated routine-maintenance costs for ≈10,000 km a year (manual-gearbox basis); the model scales them with your mileage and adds a small CNG/diesel adjustment. <b>Gearbox upkeep allowance</b> (5 yr, ≈10k km/yr, <b>estimates</b>): manual ₹0 · iMT ₹3,000 · AMT ₹9,000 · torque-converter AT ₹12,000 · dual-clutch ₹14–15,000 · hybrid e-CVT ₹4,000. Basis: owners report Maruti AMT clutch jobs of ₹3–7k each (Team-BHP, older cars) and ATF changes from ₹5k (independent) to ₹25k (dealer, Creta) (Team-BHP); I found no published DCT clutch price, so that figure is a guess. Insurance renewals use the IRDAI third-party rates for your engine size (≤1000 cc / 1000–1500 cc). Tyre prices and resale % remain rules of thumb. Resale % is a rule of thumb (Maruti/Hyundai/Creta hold value best, Tata/Mahindra/Skoda usually less) – not a market quote. Ask a dealer for the exact service-package price and extended warranty cost.</p></div>
+  </div><div>
+  <div class="panel"><h2>Before you decide – other things that matter</h2><ul class="pc">
+   <li><b>Test-drive the top 2–3</b> at your own time of day, on a bad road and on a highway; check rear-seat comfort with your family in the car.</li>
+   <li><b>Service reach:</b> count authorised service centres near your home/office in Chennai; ask about pick-up &amp; drop and typical waiting time.</li>
+   <li><b>Insurance:</b> compare 3–4 insurers online; consider zero-depreciation, engine-protect (Chennai waterlogging) and RTI add-ons rather than the dealer’s default.</li>
+   <li><b>Waiting period &amp; stock:</b> ask for the exact colour/variant availability and delivery date in writing.</li>
+   <li><b>Discounts:</b> festive offers, corporate/CSD discounts, loyalty/exchange bonus – these can move a variant by ₹20–80 k.</li>
+   <li><b>Parking &amp; size:</b> measure your parking space; check turning radius and ground clearance on your daily route (speed breakers).</li>
+   <li><b>Resale &amp; fuel choice:</b> CNG pays back only if you drive roughly 1,000+ km a month; diesel only for 1,500+ km/month highway use.</li>
+   <li><b>EVs:</b> Tamil Nadu waives road tax on EVs until 31 Dec 2027 – if you have home charging, check Punch EV / Nexon EV too (not in this list).</li>
+   <li><b>Loan:</b> compare the bank’s rate with the dealer’s; avoid bundling extras into the loan.</li></ul></div>
+  <div class="panel"><h2>Test-drive checklist</h2><ul class="pc">
+   <li>Visibility, seating position, steering reach, rear-seat knee room and headroom</li>
+   <li>Clutch/AMT smoothness in stop-go traffic; engine noise at 80–100 km/h</li>
+   <li>Ride over broken roads / speed breakers; rattles; ground-clearance scrapes</li>
+   <li>AC cooling in the sun; rear AC vents; sunroof shade</li>
+   <li>Infotainment lag, phone pairing, camera clarity, parking sensors</li>
+   <li>Boot loading height; fold the rear seat; space for your stroller/luggage</li>
+   <li>Lane-keep/ADAS behaviour if fitted (ADAS can be intrusive on Indian roads)</li></ul></div>
+  <div class="panel"><h2>Dealer questions</h2><ul class="pc">
+   <li>Exact ex-showroom, RTO, insurance, TCS, FASTag and every “other” line – in writing</li>
+   <li>Which accessories/extended warranty are mandatory vs optional?</li>
+   <li>Current discount, exchange bonus, corporate offer; delivery date</li>
+   <li>Service package price (3/5 years) and extended warranty price</li>
+   <li>Is the insurance policy choice mine? Can I pay RTO myself?</li></ul></div>
+  <div class="panel"><h2>Sources</h2><p class="mut">CarDekho (Chennai price breakdowns, specs, fuel prices), Autocar India (Kylaq, Brezza, Nexon variant guides), Gaadify, 91Wheels, Team-BHP, Spinny running-cost guides, Bharat NCAP summaries (carhp.in, MyCarHelpline), manufacturer sites.</p></div>
+  </div></div>`;
+}
+
+/* ============ CSV ============ */
+function downloadCSV(){
+  const head=['Car','Variant','Fuel','Transmission','Ex-showroom','Road tax & reg','Insurance','TCS','FASTag','Mandatory on-road','Add-ons','Final payable','ARAI','Real-world city','Real-world highway',U.years+'-yr net cost','Value score'];
+  const rows=V.filter(pass).sort(byFin).map(v=>{const k=calc(v),a=arai(v),o=own(v);return [CARS[v.car].name,v.name,FUEL_LBL[v.fuel],gbLbl(v),v.ex,v.reg,v.ins,v.tcs,FASTAG,k.mand,k.add,k.fin,a==null?'':a,a==null?'':cityHwy(v).c.toFixed(1),a==null?'':cityHwy(v).h.toFixed(1),Math.round(o.net),sc(v)];});
+  const csv=[head,...rows].map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'}));a.download='chennai-cars-filtered.csv';document.body.appendChild(a);a.click();a.remove();
+}
+
+/* ============ TABS / BOOT ============ */
+const TABS=['explore','compare','best','cost','notes','focus'];
+
+/* ---- Punch vs XUV 3XO deep-dive ---- */
+const CFG_LBL=v=>FUEL_LBL[v.fuel]+' · '+({MT:'Manual',iMT:'iMT',AMT:'AMT',AT:'Automatic',DCA:'DCA',DCT:'DCT'}[v.trans]||v.trans);
+function renderFocus(){
+  const box=document.getElementById('focusBox');if(!box)return;
+  const Y=U.years,seg=[['fuel','#e8943a','Fuel'],['svc','#4f8fd8','Service'],['gbx','#9b6bd1','Gearbox'],['ins','#d35d6e','Insurance'],['tyres','#7a8a99','Tyres']];
+  const parts=[];
+  for(const id of ['punch','xuv3xo']){
+    const c=CARS[id],vs=V.filter(v=>v.car===id);
+    const groups={};vs.forEach(v=>{const k=v.fuel+'-'+v.trans;(groups[k]=groups[k]||[]).push(v);});
+    const rep=Object.values(groups).map(a=>a.slice().sort((x,y)=>calc(x).fin-calc(y).fin)[0]).sort((a,b)=>calc(a).fin-calc(b).fin);
+    const base=rep.find(v=>v.fuel==='P'&&v.trans==='MT')||rep[0],ob=own(base);
+    const maxRun=Math.max(...rep.map(v=>own(v).running));
+    const rows=rep.map(v=>{const o=own(v),n=groups[v.fuel+'-'+v.trans].length,dr=o.running-ob.running,dp=calc(v).fin-calc(base).fin;
+      const tot=o.fuel+o.svc-o.gbx+o.gbx+o.ins+o.tyres;
+      const bar=seg.map(([k,col])=>{const val=k==='svc'?o.svc-o.gbx:o[k];return `<i style="width:${(val/maxRun*100).toFixed(1)}%;background:${col}" title="${k} ${inr(val)}"></i>`;}).join('');
+      const ch=cityHwy(v);
+      return `<tr><td><b>${CFG_LBL(v)}</b><div class="mut">${n} variants · from ${v.name}</div></td>
+      <td class="n">${inr(calc(v).fin)}</td><td class="n">${dp===0?'–':(dp>0?'+':'−')+inr(Math.abs(dp))}</td>
+      <td>${ch?fm(ch.c,v)+' / '+fm(ch.h,v):'–'}<div class="mut">blended ${fm(o.rk,v)}</div></td>
+      <td class="n">${inr(o.fuel)}</td><td class="n">${inr(o.svc-o.gbx)}</td><td class="n">${o.gbx>0?inr(o.gbx):'–'}</td><td class="n">${inr(o.ins)}</td><td class="n">${inr(o.tyres)}</td>
+      <td class="n"><b>${inr(o.running)}</b><div class="bar" style="margin-top:3px">${bar}</div></td>
+      <td class="n">${dr===0?'–':(dr>0?'+':'−')+inr(Math.abs(dr))}</td>
+      <td class="n"><b>${inr(o.net)}</b><div class="mut">₹${o.perKm.toFixed(1)}/km</div></td></tr>`;}).join('');
+    const notes=FOCUS_NOTES[id].map(([a,b])=>`<tr><td><b>${a}</b></td><td>${b}</td></tr>`).join('');
+    const all=vs.slice().sort((a,b)=>own(a).net-own(b).net).map(v=>{const o=own(v);return `<tr><td>${v.name}</td><td>${CFG_LBL(v)}</td><td class="n">${inr(calc(v).fin)}</td><td class="n">${inr(o.fuel)}</td><td class="n">${inr(o.svc)}</td><td class="n">${inr(o.ins)}</td><td class="n">${inr(o.running)}</td><td class="n"><b>${inr(o.net)}</b></td></tr>`;}).join('');
+    const lim=1500000,under=vs.filter(v=>calc(v).fin<=lim).length;
+    parts.push(`<div class="panel"><h2>${c.name} — by fuel and gearbox (${Y} yr, ${U.kmMonth*12} km/yr)</h2>
+     <p class="mut">Each row uses the cheapest variant of that fuel + gearbox. Running = fuel + service + gearbox allowance + insurance renewals + tyres. Differences are against ${CFG_LBL(base)}. ${under} of ${vs.length} variants are within ₹15 L on the current price basis.</p>
+     <div class="scroll"><table><thead><tr><th>Configuration</th><th class="n">On-road</th><th class="n">vs base</th><th>City / hwy real-world</th><th class="n">Fuel</th><th class="n">Service</th><th class="n">Gearbox</th><th class="n">Insurance renewals</th><th class="n">Tyres</th><th class="n">Running total</th><th class="n">Running vs base</th><th class="n">Net after resale</th></tr></thead><tbody>${rows}</tbody></table></div>
+     <p class="mut">Bar: ${seg.map(([k,col,l])=>`<span style="color:${col}">■</span> ${l}`).join(' · ')}</p></div>
+     <div class="panel"><h3>${c.name}: sourced facts and estimates</h3><table><tbody>${notes}</tbody></table></div>
+     <div class="panel"><h3>${c.name}: every variant</h3><div class="scroll" style="max-height:360px"><table><thead><tr><th>Variant</th><th>Fuel · gearbox</th><th class="n">On-road</th><th class="n">Fuel</th><th class="n">Service + gearbox</th><th class="n">Insurance renewals</th><th class="n">Running</th><th class="n">Net after resale</th></tr></thead><tbody>${all}</tbody></table></div></div>`);
+  }
+  const best=id=>{const vs=V.filter(v=>v.car===id&&calc(v).fin<=1500000);return vs.length?vs.slice().sort((a,b)=>own(a).net-own(b).net)[0]:null;};
+  const bp=best('punch'),bx=best('xuv3xo');
+  const line=(v,n)=>v?`<li><b>${n}</b>: lowest 5-yr net within ₹15 L is <b>${v.name} (${CFG_LBL(v)})</b> – on-road ${inr(calc(v).fin)}, net ${inr(own(v).net)} (₹${own(v).perKm.toFixed(1)}/km).</li>`:`<li><b>${n}</b>: no variant within ₹15 L.</li>`;
+  box.innerHTML=`<div class="panel"><h2>Your shortlist: Tata Punch vs Mahindra XUV 3XO</h2>
+   <ul class="pc">${line(bp,'Punch')}${line(bx,'XUV 3XO')}</ul>
+   <p class="mut">Figures follow the usage, years, fuel prices and price basis you set elsewhere (tabs 1, 3, 4). Sourced = Spinny/v3cars service tables, IRDAI third-party tariff, Autocar India tests and launch data. Estimate = gearbox allowances, CNG upkeep extra, mileage where no owner data exists. Insurance renewals cover years 2–${Y}; year-1 premium is already in the on-road price.</p></div>`+parts.join('');
+}
+function showTab(n){TABS.forEach(x=>document.getElementById('t-'+x).classList.toggle('hidden',x!==n));document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===n));if(n==='best')renderBest();if(n==='cost')renderCost();if(n==='focus')renderFocus();if(n==='compare')renderCompare();}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+document.getElementById('csvBtn').onclick=downloadCSV;
+document.getElementById('carSort').onchange=e=>{S.carSort=e.target.value;renderCards();};
+document.getElementById('slShow').onclick=e=>{S.onlySL=!S.onlySL;e.target.textContent=S.onlySL?'show all':'show only these';renderAll(false);};
+function renderAll(withFilters){saveFilters();if(withFilters)renderFilters();renderCards();renderDetail();renderCompare();
+  if(!document.getElementById('t-best').classList.contains('hidden'))renderBest();
+  if(!document.getElementById('t-cost').classList.contains('hidden'))renderCost();
+  if(!document.getElementById('t-focus').classList.contains('hidden'))renderFocus();}
+document.getElementById('carSort').value=S.carSort;
+document.getElementById('linkBtn').onclick=e=>{const u=filterLink();(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>{e.target.textContent='✔ Link copied';},()=>{prompt('Copy this link:',u);});setTimeout(()=>e.target.textContent='🔗 Copy link to this search',2500);};
+renderNotes();renderAll(true);
+</script>
+</body>
+</html>

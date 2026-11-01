@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Car Videos &amp; Reviews</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#16202a;--mut:#5d6b78;--line:#dfe4ea;--acc:#0b6bcb;--acc2:#e8f1fc}
+@media (prefers-color-scheme:dark){:root{--bg:#10151b;--card:#18202a;--ink:#e8edf2;--mut:#9aa8b6;--line:#2a3540;--acc:#6ab0ff;--acc2:#1c2c40}}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{padding:16px;background:var(--card);border-bottom:1px solid var(--line)}
+h1{margin:0 0 4px;font-size:20px}
+p.mut,.mut{color:var(--mut);font-size:13px;margin:0}
+.btn{display:inline-block;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 12px;border-radius:8px;font-size:13px;text-decoration:none;cursor:pointer}
+.btn:hover{border-color:var(--acc)}
+.btn.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.bar{display:flex;gap:6px;flex-wrap:wrap;padding:12px 16px}
+main{max-width:1200px;margin:0 auto;padding:0 16px 30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.card h3{margin:0;font-size:15px}
+.card a{color:var(--acc);text-decoration:none;font-weight:600}
+.card a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<header>
+  <h1>Videos &amp; reviews</h1>
+  <p class="mut">Each button opens a YouTube search for that car. These are searches, not hand-picked videos, so you always get the latest uploads. Prefer reviews that mention Chennai, on-road price or long-term ownership.</p>
+  <div style="margin-top:10px"><a class="btn" href="index.html">← Back to Car Finder</a></div>
+</header>
+<div class="bar" id="bar"></div>
+<main><div class="grid" id="grid"></div></main>
+<script>
+const CARS={aircross:'Citroën Aircross',basalt:'Citroën Basalt',c3:'Citroën C3',ec3:'Citroën eC3',amaze:'Honda Amaze',city:'Honda City',elevate:'Honda Elevate',alcazar:'Hyundai Alcazar',aura:'Hyundai Aura',creta:'Hyundai Creta',cretaev:'Hyundai Creta Electric',exter:'Hyundai Exter',nios:'Hyundai Grand i10 Nios',i20:'Hyundai i20',tucson:'Hyundai Tucson',venue:'Hyundai Venue',verna:'Hyundai Verna',compass:'Jeep Compass',meridian:'Jeep Meridian',carens:'Kia Carens',clavis:'Kia Carens Clavis',clavisev:'Kia Carens Clavis EV',carnival:'Kia Carnival',seltos:'Kia Seltos',sonet:'Kia Sonet',syros:'Kia Syros',be6:'Mahindra BE 6',boleroneo:'Mahindra Bolero Neo',scorpioc:'Mahindra Scorpio Classic',scorpion:'Mahindra Scorpio N',thar:'Mahindra Thar',roxx:'Mahindra Thar Roxx',xev9e:'Mahindra XEV 9e',xuv3xo:'Mahindra XUV 3XO',xuv3xoev:'Mahindra XUV 3XO EV',xuv700:'Mahindra XUV 7XO',altok10:'Maruti Alto K10',baleno:'Maruti Baleno',brezza:'Maruti Brezza',celerio:'Maruti Celerio',dzire:'Maruti Dzire',evitara:'Maruti e Vitara',ertiga:'Maruti Ertiga',fronx:'Maruti Fronx',grandvitara:'Maruti Grand Vitara',invicto:'Maruti Invicto',jimny:'Maruti Jimny',swift:'Maruti Swift',victoris:'Maruti Victoris',wagonr:'Maruti Wagon R',xl6:'Maruti XL6',astor:'MG Astor',comet:'MG Comet EV',hector:'MG Hector',windsor:'MG Windsor EV',zsev:'MG ZS EV',magnite:'Nissan Magnite',kiger:'Renault Kiger',triber:'Renault Triber',kodiaq:'Skoda Kodiaq',kushaq:'Skoda Kushaq',kylaq:'Skoda Kylaq',slavia:'Skoda Slavia',altroz:'Tata Altroz',curvv:'Tata Curvv',curvvev:'Tata Curvv EV',harrier:'Tata Harrier',harrierev:'Tata Harrier EV',nexon:'Tata Nexon',nexonev:'Tata Nexon EV',punch:'Tata Punch',punchev:'Tata Punch EV',safari:'Tata Safari',tiago:'Tata Tiago',tiagoev:'Tata Tiago EV',tigor:'Tata Tigor',fortuner:'Toyota Fortuner',glanza:'Toyota Glanza',hilux:'Toyota Hilux',crysta:'Toyota Innova Crysta',hycross:'Toyota Innova Hycross',rumion:'Toyota Rumion',hyryder:'Toyota Urban Cruiser Hyryder',taisor:'Toyota Urban Cruiser Taisor',taigun:'Volkswagen Taigun',virtus:'Volkswagen Virtus'};
+const TOPICS=[
+ ['Full review','review'],['Real-world mileage test','real world mileage test city highway'],['Variants explained – which to buy','variants explained which variant to buy'],
+ ['Long-term ownership review','long term ownership review'],['Problems &amp; complaints','problems owner review'],['On-road price in Chennai','on road price Chennai'],
+ ['Tamil review','review Tamil'],['Comparison with rivals','comparison vs rivals']];
+const yt=q=>'https://www.youtube.com/results?search_query='+encodeURIComponent(q);
+const sel=new URLSearchParams(location.search).get('car');
+const bar=document.getElementById('bar');
+bar.innerHTML='<a class="btn '+(!sel||!CARS[sel]?'on':'')+'" href="videos.html">All cars</a>'+Object.keys(CARS).map(k=>`<a class="btn ${k===sel?'on':''}" href="videos.html?car=${k}">${CARS[k]}</a>`).join('');
+const list=(sel&&CARS[sel])?[sel]:Object.keys(CARS);
+document.getElementById('grid').innerHTML=list.map(k=>`<div class="card"><h3>${CARS[k]}</h3>${TOPICS.map(t=>`<a href="${yt(CARS[k]+' '+t[1])}" target="_blank" rel="noopener">▶ ${t[0]}</a>`).join('')}</div>`).join('');
+</script>
+</body>
+</html>
