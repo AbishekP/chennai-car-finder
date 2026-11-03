@@ -1308,7 +1308,7 @@ const FEATS=[
 const FDEF={}; FEATS.forEach(([g,list])=>list.forEach(([k,l,kind,w])=>FDEF[k]={key:k,label:l,kind,w,group:g}));
 FDEF.ac.neg=/^manual/i; FDEF.cluster.neg=/^analog|^segment/i; FDEF.cluster.half=/mid|semi|tft/i; FDEF.headlamp.neg=/^halogen/i; FDEF.wheels.neg=/steel/i; FDEF.audio.neg=/^(0|1|2) speaker/i;
 /* "must-have" chips on the Explore tab */
-const MUSTS=[['sunroof','Sunroof'],['adas','ADAS (L1/L2)'],['cam360','360° camera'],['rcam','Rear camera'],['vent','Ventilated seats'],['wchg','Wireless charger'],['ac','Auto climate'],['cruise','Cruise control'],['keyless','Push-button start'],['rearvent','Rear AC vents'],['epb','Auto-hold / EPB'],['hud','Head-up display'],['wireless','Wireless AA/CarPlay'],['conn','Connected car'],['pseat','Power driver seat'],['leatherette','Leatherette']];
+const MUSTS=[['sunroof','Sunroof'],['adas','ADAS (L1/L2)'],['cam360','360° camera'],['rcam','Rear camera'],['vent','Ventilated seats'],['wchg','Wireless charger'],['ac','Auto climate'],['cruise','Cruise control'],['keyless','Push-button start'],['rearvent','Rear AC vents'],['epb','Auto-hold / EPB'],['hud','Head-up display'],['wireless','Wireless AA/CarPlay'],['conn','Connected car'],['pseat','Power driver seat'],['leatherette','Leatherette'],['paddle','Paddle shifters'],['tpms','Tyre-pressure monitor'],['modes','Drive modes'],['tele','Telescopic steering']];
 
 /* Per-car data. ladder = trims in ascending feature order [label, name-regex]; F = feature rules (see notes tab).
    Rule syntax: boolean row  key=S | - | Label[@FLAGS][?regex];Label2...   value row  key=Label[@FLAGS][?regex]:text;Label2:text

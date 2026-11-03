@@ -87,6 +87,16 @@ tr.vr.on{background:var(--acc2);outline:1px solid var(--acc)}
 .handle{cursor:grab;color:var(--mut);font-size:16px;user-select:none;padding:0 2px}
 .cmp th[draggable]{cursor:grab}
 .cmptools{gap:8px;margin-bottom:10px}
+.cmpstick{position:fixed;top:0;z-index:40;display:none;background:var(--card);border:1px solid var(--line);border-top:none;border-radius:0 0 10px 10px;box-shadow:0 6px 16px rgba(0,0,0,.14);overflow:hidden;font-size:12px;line-height:1.3}
+.cmpstick.on{display:flex}
+.cmpstick .cs0{flex:none;padding:7px;font-weight:600;color:var(--mut);border-right:1px solid var(--line);box-sizing:border-box;align-self:center}
+.cmpstick .csv{flex:1;overflow:hidden}
+.cmpstick .cst{display:flex;will-change:transform}
+.cmpstick .csc{flex:none;box-sizing:border-box;padding:6px 7px;display:flex;flex-direction:column;gap:1px;border-right:1px solid var(--line);min-width:0}
+.cmpstick .csc b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmpstick .csc span{color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmpstick .score{padding:0 5px;min-width:0;line-height:1.3;vertical-align:baseline}
+.cmpstick .score.top{background:var(--okbg);color:var(--ok)}
 .cmptools .btn:disabled,.slothead .btn:disabled{opacity:.35;cursor:default}
 details.wbox>summary{cursor:pointer;font-weight:600;font-size:14px}
 /* filter panel: collapsible sections with tick lists */
@@ -138,7 +148,72 @@ img.noimg{display:none}
 .star{cursor:pointer;color:var(--mut);font-size:15px;background:none;border:none;padding:0}
 .star.on{color:#e0a100}
 .svgbox svg{width:100%;max-width:820px;height:auto;display:block}
-@media print{header .top,.tabs,.filters,.row2,button,.btn,.slots select{display:none!important}.wrap{display:block!important;padding:0}.panel{break-inside:avoid;border:1px solid #bbb}.hidden{display:none!important}body{background:#fff;color:#000}}
+/* photo gallery: tiles in the detail panel, a pill on card photos, and the full-screen viewer (always dark, like a lightbox) */
+.thumb[data-gal]{cursor:zoom-in;position:relative}
+.gpill{position:absolute;left:8px;bottom:8px;background:rgba(10,14,20,.72);color:#fff;font-size:11.5px;padding:3px 9px;border-radius:999px;pointer-events:none;backdrop-filter:blur(4px)}
+.thumb[data-gal]:hover .gpill{background:var(--acc)}
+.gtiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.gtile{position:relative;aspect-ratio:4/3;border-radius:9px;overflow:hidden;border:1px solid var(--line);background:var(--bg);cursor:pointer;padding:0;font:inherit;color:inherit}
+.gtile img,.gtile svg{width:100%;height:100%;object-fit:cover;display:block}
+.gtile span{position:absolute;left:0;right:0;bottom:0;padding:14px 7px 5px;font-size:12px;font-weight:600;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.75));text-align:left}
+.gtile span i{font-style:normal;font-weight:400;opacity:.8}
+.gtile:hover{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc2)}
+@media(max-width:520px){.gtiles{grid-template-columns:repeat(2,1fr)}}
+#gal{--gbg:#0b0f14;--gpan:#141b23;--gline:#26313d;--gink:#eef2f6;--gmut:#93a1b0;--gacc:#6ab0ff;--gacc2:#ffb454;
+  position:fixed;inset:0;z-index:100;background:var(--gbg);color:var(--gink);display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .18s}
+#gal.on{opacity:1;pointer-events:auto}
+body.galopen{overflow:hidden}
+.gtop{display:flex;align-items:center;gap:14px;padding:12px 18px 0}
+.gtop h2{margin:0;font-size:19px}
+.gtop .gsub{color:var(--gmut);font-size:13px}
+.gtop .gx{margin-left:auto}
+.gbtn{border:1px solid var(--gline);background:var(--gpan);color:var(--gink);border-radius:999px;font:inherit;font-size:13px;padding:6px 13px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.gbtn:hover{border-color:var(--gacc)}
+.gx{width:38px;height:38px;justify-content:center;padding:0;font-size:17px}
+.gtabs{display:flex;gap:6px;padding:12px 18px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--gline)}
+.gtabs button{flex:none;border:1px solid transparent;background:none;color:var(--gmut);font:inherit;font-size:14px;padding:6px 14px;border-radius:999px;cursor:pointer}
+.gtabs button b{font-weight:400;opacity:.7;margin-left:4px;font-size:12px}
+.gtabs button:hover{color:var(--gink)}
+.gtabs button.on{background:var(--gink);color:var(--gbg);font-weight:600}
+.gtabs button:disabled{opacity:.35;cursor:default}
+.gstage{flex:1;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;padding:10px 70px;touch-action:pan-y}
+.gstage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;transition:opacity .2s;user-select:none;-webkit-user-drag:none}
+.gstage img.ld{opacity:.25}
+.gnav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:1px solid var(--gline);background:rgba(20,27,35,.8);color:var(--gink);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.gnav:hover{background:var(--gink);color:var(--gbg)}
+.gnav.p{left:14px}.gnav.n{right:14px}
+.gcap{display:flex;align-items:center;gap:12px;padding:0 18px 8px;font-size:14px;min-height:30px;flex-wrap:wrap}
+.gcap .gc{color:var(--gmut);font-variant-numeric:tabular-nums}
+.gcap .gl{margin-left:auto;display:flex;gap:8px}
+.gstrip{display:flex;gap:8px;overflow-x:auto;padding:4px 18px 16px;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:#3a4654 transparent}
+.gstrip button{flex:none;width:118px;aspect-ratio:16/9;border-radius:7px;overflow:hidden;border:2px solid transparent;padding:0;background:var(--gpan);cursor:pointer;opacity:.6;transition:opacity .15s;position:relative}
+.gstrip button:hover{opacity:1}
+.gstrip button.on{border-color:var(--gacc);opacity:1}
+.gstrip img{width:100%;height:100%;object-fit:cover;display:block}
+.gstrip .sw{position:absolute;right:5px;bottom:5px;width:14px;height:14px;cursor:inherit;border-color:rgba(255,255,255,.7)}
+.gsize{flex:1;min-height:0;overflow:auto;padding:16px 18px 24px}
+.gsize .gstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px}
+.gsize .gstat{background:var(--gpan);border:1px solid var(--gline);border-radius:10px;padding:9px 12px}
+.gsize .gstat small{display:block;color:var(--gmut);font-size:11.5px}
+.gsize .gstat b{font-size:17px;font-variant-numeric:tabular-nums}
+.gsize .gstat em{font-style:normal;font-size:12px;margin-left:5px}
+.gsize .up{color:#6fd39a}.gsize .dn{color:#ff8a80}
+.gsize .gcmp{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:14px}
+.gsize select{background:var(--gpan);color:var(--gink);border:1px solid var(--gline);border-radius:8px;padding:6px 8px;font:inherit;font-size:14px;max-width:100%}
+.gsize .glegend{display:flex;gap:14px;font-size:13px;color:var(--gmut)}
+.gsize .glegend i{display:inline-block;width:22px;height:0;border-top:3px solid var(--gacc);vertical-align:middle;margin-right:5px}
+.gsize .glegend i.c2{border-top:3px dashed var(--gacc2)}
+.gviews{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:12px}
+@media(max-width:800px){.gviews{grid-template-columns:1fr}}
+.gview{background:var(--gpan);border:1px solid var(--gline);border-radius:12px;padding:10px 12px}
+.gview.wide{grid-column:1/-1}
+.gview h4{margin:0 0 6px;font-size:13px;color:var(--gmut);font-weight:600}
+.gview svg{width:100%;height:auto;display:block;max-height:46vh}
+.gview p{margin:6px 0 0;font-size:12.5px;color:var(--gmut)}
+.gsize .gnote{font-size:12px;color:var(--gmut);margin-top:12px}
+.gempty{color:var(--gmut);text-align:center;padding:40px}
+@media(max-width:700px){.gstage{padding:6px 8px}.gnav{width:38px;height:38px;font-size:18px;background:rgba(20,27,35,.6)}.gnav.p{left:6px}.gnav.n{right:6px}.gstrip button{width:88px}.gtop{padding:10px 12px 0}.gtabs,.gcap,.gstrip,.gsize{padding-left:12px;padding-right:12px}.gtop h2{font-size:16px}.gtop .gsub{display:none}}
+@media print{.cmpstick,header .top,.tabs,.filters,.row2,button,.btn,.slots select{display:none!important}.wrap{display:block!important;padding:0}.panel{break-inside:avoid;border:1px solid #bbb}.hidden{display:none!important}body{background:#fff;color:#000}}
 </style>
 </head>
 <body>
@@ -176,7 +251,7 @@ img.noimg{display:none}
   <div class="panel"><div class="row cmptools" id="cmpTools"></div><div class="slots" id="slots"></div>
     <p class="note" style="margin:0">Drag a car by ⠿ (or its column heading in the table) to reorder, or use ◀ ▶. Add as many cars as you like – the table scrolls sideways.</p></div>
   <div class="panel" id="cmpWBox"></div>
-  <div class="panel"><div style="overflow-x:auto"><table class="cmp" id="cmpTbl"></table></div>
+  <div class="panel"><div style="overflow-x:auto" id="cmpWrap"><table class="cmp" id="cmpTbl"></table></div><div id="cmpStick" class="cmpstick" aria-hidden="true"></div>
   <p class="note">Green = best in that row. “–” = not available or not verified. ✔ = fitted, ✘ = not offered on that variant. Add-ons / discount from the Explore filters and usage from the Best-value tab are applied.</p></div>
 </div>
 
@@ -184,7 +259,10 @@ img.noimg{display:none}
 <div id="t-cost" class="wrap one hidden"><div id="costBox"></div></div>
 <div id="t-notes" class="wrap one hidden"><div id="notesBox"></div></div>
 <div id="toast" role="status"></div>
-<script src="data.js?v=20261101g"></script>
+<div id="gal" role="dialog" aria-modal="true" aria-labelledby="galT" aria-hidden="true"></div>
+<script src="data.js?v=20261103"></script>
+<script src="photos.js?v=20261103"></script>
+<script src="specs.js?v=20261103"></script>
 <script>
 const BODY_TYPES=[...new Set(Object.values(CARS).map(c=>c.body))];
 
@@ -226,6 +304,9 @@ function parseTok(tok,lad,isVal){
   if(rank<0) throw new Error('bad trim label "'+tok+'"');
   return {rank,flags,re,text};
 }
+/* ground clearance / boot the hand-checked data lacks, from CarWale (specs.js) */
+if(typeof CARFILL!=='undefined')for(const id in CARFILL){const c=CARS[id],f=CARFILL[id];if(!c)continue;
+  if(c.gc==null&&f.gc){c.gc=f.gc;c.gcSrc='CarWale';}if(c.boot==null&&f.boot){c.boot=f.boot;c.bootSrc='CarWale';}}
 for(const id in CARS){
   const c=CARS[id];
   c.lad=c.ladder.map(([label,re])=>({label,re:new RegExp(re,'i')}));
@@ -245,7 +326,8 @@ const tokOK=(t,v)=>v.rank>=t.rank&&t.flags.every(f=>FLAGF[f](v))&&(!t.re||t.re.t
 function feat(v,k){
   v._f=v._f||{};if(v._f[k])return v._f[k];
   const r=CARS[v.car].R[k],d=FDEF[k];let out;
-  if(!r) out={st:null,text:null};
+  if(!r){const x=typeof VFEAT!=='undefined'&&((VFEAT[v.car]||{})[k]||{})[v.name+'|'+v.fuel+'|'+v.trans];
+    out=x==null?{st:null,text:null}:typeof x==='boolean'?{st:x,text:x?'✔':'✘',cw:1}:{st:x!=='-',text:x,cw:1};}
   else if(r.none) out={st:false,text:'-'};
   else if(r.all) out={st:true,text:'✔'};
   else if(d.kind==='b'){const y=r.toks.some(t=>tokOK(t,v));out={st:y,text:y?'✔':'✘'};}
@@ -314,8 +396,12 @@ function calc(v){
   return {mand,add,mkt,fin,basis:S.basis==='final'?fin:mand};
 }
 function lookup(m,v){let x=m[v.fuel+'-'+v.trans];if(x==null)x=m[v.fuel+'-'+(isAT(v)||v.trans==='iMT'||v.trans==='DCT'?'AT':'MT')];return x==null?null:x;}
-function arai(v){return lookup(CARS[v.car].mil,v);}
-function owner(v){const m=RW[v.car];return m?lookup(m,v):null;}
+/* specs.js (CarWale variant pages) adds a per-variant ARAI figure and owner-reported mileage; the hand-checked
+   fuel/gearbox figures in data.js stay the fallback for ARAI and the first choice for owner mileage */
+const vspec=v=>((typeof VSPEC!=='undefined'&&VSPEC[v.car])||{})[v.name+'|'+v.fuel+'|'+v.trans];
+function arai(v){const s=vspec(v);return s&&s[0]!=null?s[0]:lookup(CARS[v.car].mil,v);}
+function owner(v){const m=RW[v.car],x=m?lookup(m,v):null;if(x!=null)return x;const s=vspec(v);if(s&&s[1]!=null)return s[1];
+  const w=typeof RW_CW!=='undefined'&&RW_CW[v.car];return w?lookup(w,v):null;}
 const ASSUME={P:17,PT:16,P12:19,D:19,CNG:22,HY:24,EV:6.5};
 function mil(v){const a=arai(v);return a!=null?{a,assumed:false}:{a:ASSUME[v.fuel],assumed:true};}
 /* EVs do better in town than on the highway, the reverse of engines: real-world ≈ 80% (city) / 66% (highway) of the claimed km/kWh */
@@ -406,7 +492,7 @@ function pass(v){
   return true;
 }
 /* share of the 45 feature rows that have verified data for this car */
-function dataPct(id){const k0='dp|'+id;if(memo.has(k0))return memo.get(k0);const n=Object.keys(FDEF).length,p=Math.round(100*Object.keys(CARS[id].R).filter(k=>FDEF[k]).length/n);memo.set(k0,p);return p;}
+function dataPct(id){const k0='dp|'+id;if(memo.has(k0))return memo.get(k0);const n=Object.keys(FDEF).length,vf=typeof VFEAT!=='undefined'&&VFEAT[id]||{},p=Math.round(100*Object.keys(FDEF).filter(k=>CARS[id].R[k]||vf[k]).length/n);memo.set(k0,p);return p;}
 const byFin=(a,b)=>calc(a).fin-calc(b).fin;
 const stars=n=>n==null?'Not rated':'★'.repeat(n)+'☆'.repeat(5-n);
 
@@ -417,13 +503,19 @@ const CARS_BY_BRAND=BRANDS.map(b=>[b,Object.keys(CARS).filter(k=>CARS[k].brand==
 const shortName=k=>CARS[k].name.replace(new RegExp('^('+BRANDS.join('|')+') '),'');
 const countBy=fn=>{const o={};V.forEach(v=>{const k=fn(v);o[k]=(o[k]||0)+1;});return o;};
 const FUELN=countBy(v=>v.fuel),GBN=countBy(gbType),BODYN=countBy(v=>CARS[v.car].body);
-const FOPEN=new Set(['budget','cars','fuel','gb']),EXP=new Set();let carQ='';
+const FOPEN=new Set(['budget','cars','fuel','gb']),EXP=new Set(),FGSHUT=new Set();let carQ='',featQ='';
+/* how many variants (of all) have each feature – shown next to the must-have ticks */
+let FEATN=null;const featN=k=>{if(!FEATN){FEATN={};for(const f in FDEF)FEATN[f]=V.filter(v=>{const e=feat(v,f);return e.st!==null&&credit(f,e)>=(f==='adas'?.6:1);}).length;}return FEATN[k];};
 /* 1 = car and all its variants ticked, .5 = some variants ticked, 0 = none */
 function carOn(k){if(!S.cars.has(k))return 0;const n=VBY[k].filter(v=>S.xVar.has(v.key)).length;return n===0?1:n===VBY[k].length?0:.5;}
 function setCar(k,on){VBY[k].forEach(v=>S.xVar.delete(v.key));on?S.cars.add(k):S.cars.delete(k);}
 const ckb=(attrs,state,label,cnt,type='checkbox')=>`<label class="ck"><input type="${type}" ${attrs} ${state===1||state===true?'checked':''} ${state===.5?'data-ind="1"':''}><span>${label}</span>${cnt!=null?`<span class="cnt">${cnt}</span>`:''}</label>`;
 function applyCarQ(){const box=document.getElementById('fCars');if(!box)return;const w=carQ.toLowerCase().trim();
   box.querySelectorAll('.bgrp').forEach(g=>{let any=false;g.querySelectorAll('.crow').forEach(r=>{const ok=!w||r.dataset.n.includes(w);r.classList.toggle('hidden',!ok);any=any||ok;});g.classList.toggle('hidden',!any);});}
+function applyFeatQ(){const box=document.getElementById('fFeats');if(!box)return;const w=featQ.toLowerCase().trim();
+  box.querySelectorAll('.ck').forEach(r=>r.classList.toggle('hidden',!!w&&!r.textContent.toLowerCase().includes(w)));
+  box.querySelectorAll('.fgrp').forEach(g=>{const any=[...g.querySelectorAll('.ck')].some(r=>!r.classList.contains('hidden'));g.classList.toggle('hidden',!any);if(g.tagName==='DETAILS'&&w)g.open=true;});
+  const none=document.getElementById('fFeatNone');if(none)none.classList.toggle('hidden',!w||!!box.querySelector('.ck:not(.hidden)'));}
 function renderFilters(){
   const f=document.getElementById('filters'),top=f.scrollTop,lt=(f.querySelector('#fCars')||{}).scrollTop||0;
   const sec=(id,title,tag,body)=>`<details class="fsec" data-s="${id}" ${FOPEN.has(id)?'open':''}><summary><span>${title}</span>${tag?`<span class="badge">${tag}</span>`:''}</summary><div class="fbody">${body}</div></details>`;
@@ -438,7 +530,9 @@ function renderFilters(){
     return `<div class="bgrp">${ckb(`data-brand="${b}"`,bs,b,ks.length+' car'+(ks.length>1?'s':''))}<div class="sub">${ks.map(k=>{const open=EXP.has(k);
       return `<div class="crow" data-n="${esc((CARS[k].name+' '+CARS[k].body).toLowerCase())}"><div class="ck2">${ckb(`data-car="${k}"`,carOn(k),shortName(k),VBY[k].length+' var.')}<button class="exp" data-exp="${k}" title="${open?'Hide':'Pick individual'} variants">${open?'▾':'▸'}</button></div>
         ${open?`<div class="sub">${VBY[k].map(v=>ckb(`data-vk="${esc(v.key)}"`,S.cars.has(k)&&!S.xVar.has(v.key),`${esc(v.name)} <span class="mut">${FUEL_LBL[v.fuel]} · ${GB_LBL[gbType(v)].replace(/ \(.*/,'')}</span>`,lk(v.ex))).join('')}</div>`:''}</div>`;}).join('')}</div></div>`;}).join('');
-  const featList=keys=>keys.map(k=>ckb(`data-set="musts" data-k="${k}"`,S.musts.has(k),FDEF[k].label)).join('');
+  /* what ticking a "kind v" feature actually requires (see credit()) */
+  const FLBL={cluster:'Fully digital instrument cluster',audio:'Audio with 3+ speakers',headlamp:'LED / projector headlamps',wheels:'Alloy wheels'};
+  const featList=(keys,lbl=FLBL)=>keys.map(k=>ckb(`data-set="musts" data-k="${k}"`,S.musts.has(k),lbl[k]||FDEF[k].label,featN(k)+' var.')).join('');
   f.innerHTML=`<div class="fhead"><h3 style="margin:0">Filters</h3><button class="btn sm" id="reset">Reset all</button></div>
   <input type="text" id="fQ" class="wide" placeholder="Search: creta diesel, zxi, sedan…" value="${esc(S.q)}">
   ${sec('budget','On-road budget',`<span id="vP">${lk(S.minPrice)} – ${lk(S.maxPrice)}</span>`,`
@@ -456,9 +550,12 @@ function renderFilters(){
   ${sec('body','Body type &amp; seats',nBody||'',BODY_TYPES.map(k=>ckb(`data-set="body" data-k="${k}"`,S.body.has(k),k,(BODYN[k]||0)+' var.')).join('')+
     `<div class="fsub">Seats</div>`+[['any','Any'],['5','5 seats'],['7','7 seats']].map(([v,l])=>ckb(`name="fSeats" value="${v}"`,S.seats===v,l,null,'radio')).join(''))}
   ${sec('feat','Must-have features',S.musts.size?S.musts.size+' ticked':'',`
-    <div class="fsub" style="margin-top:0">Most asked for</div>${featList(MUSTS.map(m=>m[0]))}
+    <input type="text" id="fFeatQ" class="wide" placeholder="Find a feature: paddle, sunroof, ADAS…" value="${esc(featQ)}">
+    <div id="fFeats"><div class="fgrp"><div class="fsub" style="margin-top:4px">Most asked for</div>${featList(MUSTS.map(m=>m[0]),Object.fromEntries(MUSTS))}</div>
     ${FEATS.map(([g,list])=>{const ks=list.map(x=>x[0]).filter(k=>!MUSTS.some(m=>m[0]===k));const n=ks.filter(k=>S.musts.has(k)).length;
-      return ks.length?`<details class="fsub-d"><summary class="fsub" style="cursor:pointer">${g} (${ks.length})${n?` <span class="badge">${n}</span>`:''}</summary>${featList(ks)}</details>`:'';}).join('')}
+      return ks.length?`<details class="fsub-d fgrp" data-g="${esc(g)}" ${FGSHUT.has(g)?'':'open'}><summary class="fsub" style="cursor:pointer">${g} (${ks.length})${n?` <span class="badge">${n}</span>`:''}</summary>${featList(ks)}</details>`:'';}).join('')}
+    <p class="mut hidden" id="fFeatNone">No feature matches that search.</p></div>
+    <p class="mut" style="margin:4px 0 0">The number is how many of the ${V.length} variants have the feature.</p>
     <div class="row" style="margin-top:6px">If a feature is unverified for a car: ${sel('fUnk',S.unk,[['hide','hide it'],['show','still show it']])}</div>`)}
   ${sec('size','Safety, size &amp; power',nSize||'',`
     <div class="row">Crash-test stars ${sel('fStars',S.minStars,[[0,'any'],[3,'3★+'],[4,'4★+'],[5,'5★']])}</div>
@@ -482,6 +579,8 @@ function renderFilters(){
   f.querySelectorAll('[data-ind]').forEach(i=>i.indeterminate=true);
   f.scrollTop=top;q('#fCars').scrollTop=lt;applyCarQ();
   f.querySelectorAll('details.fsec').forEach(d=>d.ontoggle=()=>d.open?FOPEN.add(d.dataset.s):FOPEN.delete(d.dataset.s));
+  f.querySelectorAll('details.fgrp').forEach(d=>d.ontoggle=()=>{if(!featQ)d.open?FGSHUT.delete(d.dataset.g):FGSHUT.add(d.dataset.g);});
+  q('#fFeatQ').oninput=e=>{featQ=e.target.value;applyFeatQ();};applyFeatQ();
   const redo=()=>{renderFilters();renderAll(false);};
   const setP=(a,b,redraw)=>{S.minPrice=Math.max(0,a);S.maxPrice=Math.max(b,S.minPrice);if(redraw){renderFilters();}else{q('#vP').textContent=lk(S.minPrice)+' – '+lk(S.maxPrice);q('#nP0').value=S.minPrice/1e5;q('#nP1').value=S.maxPrice/1e5;q('#rP0').value=S.minPrice;q('#rP').value=S.maxPrice;q('#pPre').querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));}renderAll(false);};
   q('#rP').oninput=e=>setP(Math.min(S.minPrice,+e.target.value),+e.target.value);
@@ -511,7 +610,7 @@ function renderFilters(){
   q('#noC').onclick=()=>{Object.keys(CARS).forEach(k=>setCar(k,false));redo();};
   f.querySelectorAll('input[data-a]').forEach(i=>i.onchange=e=>{S.add[e.target.dataset.a]=e.target.checked;touch();redo();});
   f.querySelectorAll('[data-m]').forEach(i=>i.oninput=e=>{S.amt[e.target.dataset.m]=+e.target.value||0;touch();renderAll(false);});
-  q('#reset').onclick=()=>{Object.assign(S,S_DEF());carQ='';touch();redo();};
+  q('#reset').onclick=()=>{Object.assign(S,S_DEF());carQ='';featQ='';touch();redo();};
 }
 
 /* ============ PICTURES, COLOURS & OFFICIAL LINKS ============ */
@@ -531,14 +630,155 @@ function linksHTML(id){const m=MEDIA[id];if(!m)return '';const a=(u,l,cls='')=>`
   return (m.v360?a(m.v360,'⟳ 360° view – official site','pri'):'')+a(m.site,'Official website'+(m.siteUnverified?' (unverified)':''),m.v360?'':'')+
     (m.cw360?a(m.cw360,'⟳ 360° view'+(m.v360?' – CarWale':' – CarWale (maker has no direct link)'),m.v360?'':'pri'):'')+a(m.cw+'images/','All photos');}
 function colourPanel(id,v){const m=MEDIA[id];if(!m)return '';
-  return `<div class="panel"><h3>Colours &amp; pictures – ${CARS[id].name} <span class="mut">(${m.col.length} colour${m.col.length>1?'s':''})</span></h3>
-    <div class="thumb big">${carImg(id)}</div><div class="dots">${dotsHTML(id,false,40)}</div>
+  return `<div class="panel"><h3>Photos, colours &amp; size – ${CARS[id].name} <span class="mut">(${galCount(id)} photos · ${m.col.length} colour${m.col.length>1?'s':''})</span></h3>
+    ${galTiles(id)}
+    <div class="thumb big" data-gal="${id}|col" title="Open the colour gallery">${carImg(id)}<span class="gpill">⤢ Full screen</span></div><div class="dots">${dotsHTML(id,false,40)}</div>
     <div class="row2" style="margin-top:8px">${linksHTML(id)}</div>
     <p class="note">Tap a swatch to see the car in that colour. Dual-tone (two-colour) paints are usually only on upper variants – on the official site's colour/360° configurator you can pick the variant${v?' ('+esc(v.name)+')':''} and colour together. Makers do not publish a separate 360° page per variant, so the links open the model's 360° viewer. ${m.v360?'':'This maker has no direct 360° link on its site, so the 360° button opens CarWale’s viewer.'}${m.siteUnverified?' Tata’s website had an expired security certificate when checked (Nov 2026), so its link could not be verified.':''} Colours and photos as listed on ${id==='c3'?'CarDekho':'CarWale'}, ${MEDIA_ASOF}.</p></div>`;}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-ci]');if(!b)return;e.stopPropagation();const id=b.dataset.cc,i=+b.dataset.ci;COLSEL[id]=i;const c=MEDIA[id].col[i];
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ci]');if(!b)return;e.stopPropagation();pickCol(b.dataset.cc,+b.dataset.ci);},true);
+function pickCol(id,i){COLSEL[id]=i;const c=MEDIA[id].col[i];
   document.querySelectorAll(`[data-cimg="${id}"]`).forEach(im=>{im.classList.remove('noimg');im.src=photoOf(id,i);im.alt=CARS[id].name+' in '+c[0];});
   document.querySelectorAll(`[data-cc="${id}"]`).forEach(s=>s.classList.toggle('on',+s.dataset.ci===i));
-  document.querySelectorAll(`[data-cname="${id}"]`).forEach(s=>s.textContent=colName(id,i));},true);
+  document.querySelectorAll(`[data-cname="${id}"]`).forEach(s=>s.textContent=colName(id,i));}
+
+/* ============ PHOTO GALLERY ============ */
+/* PHOTOS (photos.js) holds CarWale gallery photos per car in four sections; the viewer adds the colour photos from MEDIA
+   and a to-scale size drawing built from CARS dimensions. Anything with data-gal="<car>[|<section>]" opens it. */
+const PH=typeof PHOTOS==='undefined'?{}:PHOTOS;
+const GSEC=[['ext','Exterior'],['int','Interior'],['det','Details'],['boot','Boot'],['col','Colours'],['size','Size']];
+const resize=(u,sz)=>u.replace(/\/\d+x\d+\//,'/'+sz+'/');
+/* items of one section as [label, url at 664x374, swatch hex or null] */
+function galItems(id,sec){
+  if(sec==='col'){const m=MEDIA[id];return m?m.col.map((c,i)=>[colName(id,i),photoOf(id,i),c[1]]):[];}
+  const p=PH[id];return p&&p[sec]?p[sec].map(([t,f])=>[t,PHOTO_HOST+'664x374/'+p.b+f,null]):[];}
+const galCount=id=>GSEC.reduce((n,[s])=>n+(s==='size'?0:galItems(id,s).length),0);
+const G={id:null,sec:'ext',i:0,cmp:'',back:null};
+const galEl=()=>document.getElementById('gal');
+function openGal(id,sec){
+  G.id=id;G.cmp=G.cmp===id?'':G.cmp;G.back=document.activeElement;
+  G.sec=sec||GSEC.find(([s])=>s==='size'||galItems(id,s).length)[0];G.i=sec==='col'&&MEDIA[id]?colOf(id).i:0;
+  const g=galEl();g.classList.add('on');g.setAttribute('aria-hidden','false');document.body.classList.add('galopen');renderGal();g.querySelector('.gx').focus();}
+function closeGal(){const g=galEl();g.classList.remove('on');g.setAttribute('aria-hidden','true');document.body.classList.remove('galopen');g.innerHTML='';
+  if(G.back&&G.back.focus)G.back.focus();G.id=null;}
+function renderGal(){
+  const id=G.id,c=CARS[id],g=galEl(),m=MEDIA[id];
+  const fin=V.filter(v=>v.car===id).map(v=>calc(v).fin);
+  const tabs=GSEC.map(([s,l])=>{const n=s==='size'?0:galItems(id,s).length;return `<button data-gs="${s}" class="${s===G.sec?'on':''}" ${s!=='size'&&!n?'disabled':''}>${l}${n?`<b>${n}</b>`:''}</button>`;}).join('');
+  const links=m?`<a class="gbtn" href="${m.cw}images/" target="_blank" rel="noopener">All photos on CarWale ↗</a>${m.v360||m.cw360?`<a class="gbtn" href="${m.v360||m.cw360}" target="_blank" rel="noopener">⟳ 360° view ↗</a>`:''}`:'';
+  g.innerHTML=`<div class="gtop"><div><h2 id="galT">${esc(c.name)}</h2><div class="gsub">${c.body} · ${c.seats} seats · ${lk(Math.min(...fin))} – ${lk(Math.max(...fin))} on-road</div></div>
+    <button class="gbtn gx" title="Close (Esc)" aria-label="Close photos">✕</button></div>
+    <div class="gtabs" role="tablist">${tabs}</div>
+    ${G.sec==='size'?`<div class="gsize">${sizeHTML(id,G.cmp)}</div>`:
+     `<div class="gstage"><img alt=""><button class="gnav p" aria-label="Previous photo">‹</button><button class="gnav n" aria-label="Next photo">›</button></div>
+      <div class="gcap"><b data-gcap></b><span class="gc" data-gcnt></span><span class="gl">${links}</span></div>
+      <div class="gstrip">${galItems(id,G.sec).map((x,i)=>`<button data-gi="${i}" aria-label="${esc(x[0])}" title="${esc(x[0])}"><img src="${resize(x[1],'370x208')}" alt="" loading="lazy">${x[2]?`<span class="sw" style="background:${swBg(x[2])}"></span>`:''}</button>`).join('')}</div>`}`;
+  g.querySelector('.gx').onclick=closeGal;
+  g.querySelectorAll('[data-gs]').forEach(b=>b.onclick=()=>{G.sec=b.dataset.gs;G.i=G.sec==='col'&&m?colOf(id).i:0;renderGal();});
+  if(G.sec==='size'){const s=g.querySelector('#gCmp');s.onchange=()=>{G.cmp=s.value;renderGal();g.querySelector('#gCmp').focus();};return;}
+  g.querySelector('.gnav.p').onclick=()=>galGo(-1);g.querySelector('.gnav.n').onclick=()=>galGo(1);
+  g.querySelectorAll('[data-gi]').forEach(b=>b.onclick=()=>{G.i=+b.dataset.gi;galShow();});
+  const st=g.querySelector('.gstage');let x0=null;
+  st.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;},{passive:true});
+  st.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>45)galGo(dx<0?1:-1);});
+  galShow();
+}
+function galGo(d){const n=galItems(G.id,G.sec).length;if(!n)return;G.i=(G.i+d+n)%n;galShow();}
+function galShow(){
+  const g=galEl(),it=galItems(G.id,G.sec),x=it[G.i];if(!x)return;
+  const im=g.querySelector('.gstage img'),big=resize(x[1],'1280x720');
+  if(im.dataset.u!==big){im.dataset.u=big;im.classList.add('ld');im.onload=()=>im.classList.remove('ld');im.src=resize(x[1],'370x208');
+    const hi=new Image();hi.onload=()=>{if(im.dataset.u===big)im.src=big;};hi.onerror=()=>{if(im.dataset.u===big)im.src=x[1];};hi.src=big;}
+  im.alt=CARS[G.id].name+' – '+x[0];
+  g.querySelector('[data-gcap]').textContent=x[0];g.querySelector('[data-gcnt]').textContent=(G.i+1)+' / '+it.length;
+  g.querySelectorAll('[data-gi]').forEach(b=>b.classList.toggle('on',+b.dataset.gi===G.i));
+  const on=g.querySelector('[data-gi].on');if(on)on.scrollIntoView({block:'nearest',inline:'center'});
+  [1,-1].forEach(d=>{const y=it[(G.i+d+it.length)%it.length];if(y)new Image().src=resize(y[1],'1280x720');});
+  /* picking a colour here also picks it everywhere else on the page */
+  if(G.sec==='col')pickCol(G.id,G.i);
+}
+document.addEventListener('keydown',e=>{if(!G.id)return;
+  if(e.key==='Escape'){e.preventDefault();closeGal();}
+  else if((e.key==='ArrowRight'||e.key==='ArrowLeft')&&G.sec!=='size'&&e.target.tagName!=='SELECT'){e.preventDefault();galGo(e.key==='ArrowRight'?1:-1);}
+  else if(e.key==='Tab'){const f=[...galEl().querySelectorAll('button:not(:disabled),a,select')];if(!f.length)return;
+    const a=f[0],z=f[f.length-1];if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus();}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus();}}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-gal]');if(!b||e.target.closest('[data-ci]'))return;const [id,sec]=b.dataset.gal.split('|');openGal(id,sec);});
+
+/* ---- size: side, front and top views drawn to one scale from published dimensions (shape is schematic) ---- */
+function geo(id){const c=CARS[id],[L,W,H]=c.dim,t=/(\d+)\/(\d+)\s*Z?R\s*(\d+)/.exec(c.tyre||'');
+  const dia=t?+t[3]*25.4+2*t[1]*t[2]/100:600,gc=c.gc||170,fo=(L-c.wb)*.53;
+  const kind=/Sedan/.test(c.body)?'sedan':/Hatch/.test(c.body)?'hatch':/MPV/.test(c.body)?'mpv':'suv';
+  return {L,W,H,wb:c.wb,gc,gcKnown:!!c.gc,r:dia/2,tw:t?+t[1]:185,fo,kind,name:c.name};}
+/* Catmull-Rom through points → smooth SVG path; y is height above ground, flipped for SVG */
+function smooth(pts){let d=`M${pts[0][0]},${-pts[0][1]}`;for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;
+  d+=` C${p1[0]+(p2[0]-p0[0])/6},${-(p1[1]+(p2[1]-p0[1])/6)} ${p2[0]-(p3[0]-p1[0])/6},${-(p2[1]-(p3[1]-p1[1])/6)} ${p2[0]},${-p2[1]}`;}return d;}
+function sideShape(q){const {L,H,gc,wb,fo}=q,ra=fo+wb,k=q.kind;
+  const hood=k==='sedan'?H*.6:k==='hatch'?H*.6:k==='mpv'?H*.6:H*.66,belt=hood+(H-hood)*.1;
+  const ws=fo+wb*(k==='mpv'?0:k==='suv'?.1:.05),rf=fo+wb*(k==='mpv'?.3:k==='sedan'?.42:.38);
+  const top=k==='sedan'?[[rf,H],[fo+wb*.82,H*.985],[ra+(L-ra)*.15,belt+(H-belt)*.15],[L-60,belt-10],[L,H*.58]]:
+    [[rf,H],[L-(L-ra)*.55,H*.985],[L-35,H*(k==='hatch'?.86:.9)],[L,H*.55]];
+  const upper=[[0,gc+(hood-gc)*.4],[30,hood-60],[fo*.7,hood-10],[ws,belt],...top];
+  const glass=k==='sedan'?[[ws+60,belt+25],[rf+20,H-35],[fo+wb*.8,H-45],[ra+(L-ra)*.1,belt+40]]:[[ws+60,belt+25],[rf+20,H-35],[L-(L-ra)*.6,H-40],[L-85,belt+30]];
+  return {body:smooth(upper)+` L${L-15},${-(gc+70)} Q${L-20},${-gc} ${L-120},${-gc} L120,${-gc} Q20,${-gc} 30,${-(gc+90)} Z`,glass:smooth(glass)+' Z',fa:fo,ra};}
+function dimLine(x1,y1,x2,y2,label,vert,off){const a=vert?`M${x1-35},${y1}h70M${x2-35},${y2}h70`:`M${x1},${y1-35}v70M${x2},${y2-35}v70`;
+  const tx=vert?x1+(off||60):(x1+x2)/2,ty=vert?(y1+y2)/2:y1+(off||-45);
+  return `<path d="M${x1},${y1}L${x2},${y2}${a}" class="dl"/><text x="${tx}" y="${ty}" class="dt" ${vert?'dominant-baseline="middle"':'text-anchor="middle"'}>${label}</text>`;}
+const SVGST=`<style>.b1{fill:rgba(106,176,255,.16);stroke:#6ab0ff;stroke-width:14;stroke-linejoin:round}.g1{fill:rgba(106,176,255,.32)}
+ .b2{fill:none;stroke:#ffb454;stroke-width:14;stroke-dasharray:60 34;stroke-linejoin:round}.w1{fill:#0b0f14;stroke:#cfd8e2;stroke-width:16}.w1i{fill:#5b6774}
+ .dl{stroke:#93a1b0;stroke-width:8;fill:none}.dt{fill:#eef2f6;font:600 105px system-ui,sans-serif}.dm{fill:#93a1b0;font:95px system-ui,sans-serif}
+ .slot{fill:none;stroke:#93a1b0;stroke-width:12;stroke-dasharray:50 40}</style>`;
+const mm=n=>Math.round(n).toLocaleString('en-IN')+' mm';
+function sideSVG(a,b){const L=Math.max(a.L,b?b.L:0),H=Math.max(a.H,b?b.H:0),s=sideShape(a);
+  let h=`<svg viewBox="-260 ${-(H+120)} ${L+780} ${H+620}" role="img" aria-label="Side view of ${esc(a.name)} with dimensions">${SVGST}`;
+  h+=`<line x1="-200" y1="0" x2="${L+380}" y2="0" stroke="#3a4654" stroke-width="10"/>`;
+  if(b){const t=sideShape(b);h+=`<path d="${t.body}" class="b2"/>`+[t.fa,t.ra].map(x=>`<circle cx="${x}" cy="${-b.r}" r="${b.r}" class="b2"/>`).join('');}
+  h+=`<path d="${s.body}" class="b1"/><path d="${s.glass}" class="g1"/>`+[s.fa,s.ra].map(x=>`<circle cx="${x}" cy="${-a.r}" r="${a.r}" class="w1"/><circle cx="${x}" cy="${-a.r}" r="${a.r*.55}" class="w1i"/>`).join('');
+  h+=dimLine(s.fa,110,s.ra,110,'Wheelbase '+mm(a.wb),false,125).replace('class="dt"','class="dm"')+dimLine(0,330,a.L,330,'Length '+mm(a.L),false,140);
+  h+=dimLine(a.L+190,0,a.L+190,-a.H,'',true)+`<text x="${a.L+250}" y="${-a.H/2}" class="dt" dominant-baseline="middle"><tspan x="${a.L+240}" dy="-55">Height</tspan><tspan x="${a.L+240}" dy="115">${mm(a.H)}</tspan></text>`;
+  const mx=(s.fa+s.ra)/2;h+=`<path d="M${mx},0V${-a.gc}" class="dl" style="stroke:#ffd277"/><text x="${mx}" y="${-a.gc-70}" class="dm" text-anchor="middle" style="fill:#ffd277">${a.gcKnown?'Ground clearance '+mm(a.gc):'Ground clearance not published'}</text>`;
+  return h+'</svg>';}
+function frontShape(q){const {W,H,gc}=q,belt=H*(q.kind==='sedan'?.62:.64),rw=W*.74;
+  return `M${-W/2+40},${-gc} L${-W/2},${-belt*.8} Q${-W/2},${-belt} ${-W/2+50},${-belt} L${-rw/2},${-H+70} Q${-rw/2+20},${-H} ${-rw/2+110},${-H} L${rw/2-110},${-H} Q${rw/2-20},${-H} ${rw/2},${-H+70} L${W/2-50},${-belt} Q${W/2},${-belt} ${W/2},${-belt*.8} L${W/2-40},${-gc} Z`;}
+function frontSVG(a,b){const W=Math.max(a.W,b?b.W:0),H=Math.max(a.H,b?b.H:0);
+  let h=`<svg viewBox="${-W/2-220} ${-(H+150)} ${W+900} ${H+480}" role="img" aria-label="Front view, width and height">${SVGST}<line x1="${-W/2-150}" y1="0" x2="${W/2+150}" y2="0" stroke="#3a4654" stroke-width="10"/>`;
+  if(b)h+=`<path d="${frontShape(b)}" class="b2"/>`;
+  const tw=a.tw,belt=a.H*(a.kind==='sedan'?.62:.64);
+  h+=`<path d="${frontShape(a)}" class="b1"/><path d="M${-a.W*.36},${-belt-40} L${-a.W*.33},${-a.H+110} L${a.W*.33},${-a.H+110} L${a.W*.36},${-belt-40}Z" class="g1"/>`+
+    [-1,1].map(d=>`<rect x="${d*(a.W/2-60)-(d>0?tw:0)}" y="${-a.r*1.05}" width="${tw}" height="${a.r*1.05}" rx="30" fill="#0b0f14" stroke="#cfd8e2" stroke-width="14"/>`).join('');
+  h+=dimLine(-a.W/2,170,a.W/2,170,'Width '+mm(a.W),false,130)+dimLine(a.W/2+170,0,a.W/2+170,-a.H,mm(a.H),true);
+  return h+'</svg>';}
+function topSVG(a,b){const SL=5000,SW=2500,car=(q,cls)=>`<rect x="${(SL-q.L)/2}" y="${(SW-q.W)/2}" width="${q.L}" height="${q.W}" rx="${q.W*.2}" class="${cls}"/>`;
+  let h=`<svg viewBox="-150 -150 ${SL+300} ${SW+480}" role="img" aria-label="Top view inside a 5 by 2.5 metre parking bay">${SVGST}<rect x="0" y="0" width="${SL}" height="${SW}" class="slot"/>`;
+  if(b)h+=car(b,'b2');
+  h+=car(a,'b1')+`<rect x="${(SL-a.L)/2+a.L*.3}" y="${(SW-a.W)/2+a.W*.12}" width="${a.L*.38}" height="${a.W*.76}" rx="${a.W*.1}" class="g1"/>`;
+  const side=(SW-a.W)/2,end=(SL-a.L)/2;
+  h+=`<text x="${SL/2}" y="${SW+170}" class="dm" text-anchor="middle">Parking bay 5.0 m × 2.5 m · ${side>0?'≈'+(side/10).toFixed(0)+' cm each side, ':''}${end>0?'≈'+(end/10).toFixed(0)+' cm front and back':'longer than the bay'}</text>`;
+  return h+'</svg>';}
+function sizeHTML(id,cmp){
+  const a=geo(id),b=cmp&&CARS[cmp]?geo(cmp):null,c=CARS[id],c2=b&&CARS[cmp];
+  const boot=c.boot,boot2=c2&&c2.boot;
+  const stat=(l,v,v2,unit)=>{const d=v!=null&&v2!=null?v-v2:null;
+    return `<div class="gstat"><small>${l}</small><b>${v==null?'–':Math.round(v).toLocaleString('en-IN')+' '+unit}</b>${d?`<em class="${d>0?'up':'dn'}">${d>0?'+':'−'}${Math.abs(Math.round(d)).toLocaleString('en-IN')}</em>`:''}</div>`;};
+  const st=[['Length',a.L,b&&b.L,'mm'],['Width',a.W,b&&b.W,'mm'],['Height',a.H,b&&b.H,'mm'],['Wheelbase',a.wb,b&&b.wb,'mm'],['Ground clearance',c.gc,c2&&c2.gc,'mm'],['Boot',boot,boot2,'L']];
+  const opts=Object.keys(CARS).filter(k=>k!==id).sort((x,y)=>CARS[x].name.localeCompare(CARS[y].name));
+  const inCmp=[...new Set(CMP.map(i=>V[i].car))].filter(k=>k!==id);
+  return `<div class="gcmp"><label for="gCmp">Compare size with</label><select id="gCmp"><option value="">— no comparison —</option>
+      ${inCmp.length?`<optgroup label="In your comparison">${inCmp.map(k=>`<option value="${k}" ${k===cmp?'selected':''}>${esc(CARS[k].name)}</option>`).join('')}</optgroup>`:''}
+      <optgroup label="All cars">${opts.map(k=>`<option value="${k}" ${k===cmp?'selected':''}>${esc(CARS[k].name)} · ${CARS[k].dim[0]} mm</option>`).join('')}</optgroup></select>
+      <span class="glegend"><span><i></i>${esc(c.name)}</span>${b?`<span><i class="c2"></i>${esc(c2.name)}</span>`:''}</span></div>
+    <div class="gstats">${st.map(x=>stat(...x)).join('')}</div>
+    ${b?`<p class="gnote" style="margin:-4px 0 12px">Green/red figures show how much bigger (+) or smaller (−) the ${esc(c.name)} is than the ${esc(c2.name)}.</p>`:''}
+    <div class="gviews"><div class="gview wide"><h4>Side view</h4>${sideSVG(a,b)}</div>
+      <div class="gview"><h4>Front view (width without mirrors)</h4>${frontSVG(a,b)}</div>
+      <div class="gview"><h4>From above, in a standard parking bay</h4>${topSVG(a,b)}</div></div>
+    <p class="gnote">Drawn to scale from the published length, width, height, wheelbase, ground clearance and tyre size; the body shape itself is a simplified outline, not the real car. Most Indian apartment parking bays are about 5.0 × 2.5 m – measure yours.</p>`;}
+/* tiles for the detail panel: one per gallery section with a cover photo */
+function galTiles(id){
+  const pick=(sec,re)=>{const it=galItems(id,sec);return (re&&it.find(x=>re.test(x[0])))||it[0];};
+  const t=[['ext','Exterior',pick('ext',/front three quarter/i)],['int','Interior',pick('int',/dashboard/i)],
+    ['boot','Boot',pick('boot')||null],['det','Details',pick('det')]].filter(x=>x[2]).slice(0,3);
+  const n=s=>galItems(id,s).length,q=geo(id),sh=sideShape(q);
+  return `<div class="gtiles">${t.map(([s,l,x])=>`<button class="gtile" data-gal="${id}|${s}"><img src="${resize(x[1],'370x208')}" alt="" loading="lazy"><span>${l} <i>${n(s)}</i></span></button>`).join('')}
+    <button class="gtile" data-gal="${id}|size" style="background:#141b23"><svg viewBox="-260 ${-(q.H+200)} ${q.L+520} ${q.H+420}" aria-hidden="true">${SVGST}<path d="${sh.body}" class="b1"/>${[sh.fa,sh.ra].map(x=>`<circle cx="${x}" cy="${-q.r}" r="${q.r}" class="w1"/>`).join('')}</svg><span>Size <i>to scale</i></span></button></div>`;}
 
 /* ============ CARDS ============ */
 function renderCards(){
@@ -556,7 +796,7 @@ function renderCards(){
     const c=CARS[id],x=I[id],ms=x.g.map(arai).filter(m=>m!=null);
     const cng=x.g.some(v=>v.fuel==='CNG');
     return `<div class="car ${S.selCar===id?'sel':''}"><button class="carx" data-hide="${id}" title="Remove ${esc(c.name)} from the list (unticks it in the filters)" aria-label="Remove ${esc(c.name)}">✕</button>
-      ${MEDIA[id]?`<div class="thumb">${carImg(id)}</div><div class="dots">${dotsHTML(id,true)}</div>`:''}
+      ${MEDIA[id]?`<div class="thumb" data-gal="${id}" title="See all photos of the ${esc(c.name)}">${carImg(id)}<span class="gpill">📷 ${galCount(id)} photos · size</span></div><div class="dots">${dotsHTML(id,true)}</div>`:''}
       <div><span class="tag">${c.body}</span><span class="tag">${c.seats} seats</span><span class="tag">${stars(c.stars)}</span></div>
       <h4>${c.name}</h4>
       <div class="price">${lk(Math.min(...x.fin))} – ${lk(Math.max(...x.fin))}</div>
@@ -587,6 +827,7 @@ function featHTML(v,showMissing){
       if(e.st===null) s='<span class="unk">– not verified</span>';
       else if(kind==='b') s=e.st?'<span class="yes">✔ Yes</span>':'<span class="no">✘ Not offered</span>';
       else s=e.st?`<span class="yes">${e.text}</span>`:'<span class="no">✘ None</span>';
+      if(e.cw&&e.st!==null)s+=' <span class="est" title="From CarWale’s variant page (Nov 2026), not cross-checked with the brochure">CarWale</span>';
       h+=`<div><span class="mut">${label}</span><br>${s}</div>`;
     }
   }
@@ -763,7 +1004,7 @@ function renderCmpTable(){
   const txt=(label,fn)=>`<tr><td>${label}</td>${sel.map(s=>`<td>${dash(fn(s))}</td>`).join('')}</tr>`;
   const cat=n=>`<tr class="cat"><td colspan="${sel.length+1}">${n}</td></tr>`;
   let h=`<tr><th>Car <span class="mut">(drag headings to reorder)</span></th>${sel.map((s,i)=>`<th draggable="true" data-drag="${i}" data-drop="${i}" title="Drag to reorder">⠿ #${i+1} ${s.c.name}</th>`).join('')}</tr>`;
-  h+=`<tr><td>Picture <span class="mut">(tap a colour below)</span></td>${sel.map(s=>`<td><div class="thumb">${carImg(s.v.car)}</div></td>`).join('')}</tr>`;
+  h+=`<tr><td>Picture <span class="mut">(tap a colour below)</span></td>${sel.map(s=>`<td><div class="thumb" data-gal="${s.v.car}">${carImg(s.v.car)}</div></td>`).join('')}</tr>`;
   h+=`<tr><td>Colours</td>${sel.map(s=>`<td>${MEDIA[s.v.car]?`<div class="dots">${dotsHTML(s.v.car,true,20)}</div><div class="mut">${MEDIA[s.v.car].col.length} colours</div>`:'–'}</td>`).join('')}</tr>`;
   h+=`<tr><td>Official site &amp; 360° view</td>${sel.map(s=>`<td><div class="dots">${linksHTML(s.v.car)}</div></td>`).join('')}</tr>`;
   h+=txt('Variant',s=>`${s.v.name} (${gbLbl(s.v)})`)+txt('Fuel',s=>FUEL_LBL[s.v.fuel])+txt('Body / seats',s=>`${s.c.body} · ${s.c.seats}`);
@@ -792,7 +1033,26 @@ function renderCmpTable(){
   }
   h+=`<tr><td>Videos</td>${sel.map(s=>`<td><a href="videos.html?car=${s.v.car}">▶ Open videos</a></td>`).join('')}</tr>`;
   t.innerHTML=h;bindDrag(t);
+  const top=Math.max(...sel.map(s=>sc(s.v)));
+  document.getElementById('cmpStick').innerHTML=`<div class="cs0">Comparing ${sel.length}</div><div class="csv"><div class="cst">${sel.map((s,i)=>
+    `<div class="csc"><b>#${i+1} ${esc(s.c.name)}</b><span>${esc(s.v.name)} · ${gbLbl(s.v)}</span><span>Value <span class="score${sc(s.v)===top&&sel.length>1?' top':''}">${sc(s.v)}</span> · ${lk(s.k.fin)}</span></div>`).join('')}</div></div>`;
+  syncStick();
 }
+/* compact copy of the table heading, pinned to the top of the window once the real heading has scrolled away;
+   its columns follow the table's widths and sideways scroll */
+function syncStick(){
+  const b=document.getElementById('cmpStick'),w=document.getElementById('cmpWrap'),t=document.getElementById('cmpTbl');
+  const hr=t.rows[0],r=w.getBoundingClientRect();
+  const on=CMP.length&&hr&&hr.cells.length>1&&r.height&&hr.getBoundingClientRect().bottom<0&&r.bottom>b.offsetHeight+60;
+  b.classList.toggle('on',!!on);if(!on)return;
+  b.style.left=r.left+'px';b.style.width=r.width+'px';
+  const cs=[...hr.cells],w0=cs[0].getBoundingClientRect().width;
+  b.querySelector('.cs0').style.width=w0+'px';
+  b.querySelectorAll('.csc').forEach((c,i)=>c.style.width=cs[i+1].getBoundingClientRect().width+'px');
+  b.querySelector('.cst').style.transform=`translateX(${-w.scrollLeft}px)`;
+}
+window.addEventListener('scroll',syncStick,{passive:true});window.addEventListener('resize',syncStick);
+document.getElementById('cmpWrap').addEventListener('scroll',syncStick,{passive:true});
 
 /* ============ BEST VALUE TAB ============ */
 const PRESETS={
@@ -929,6 +1189,8 @@ function renderNotes(){
    <li><b>Offers &amp; waiting:</b> typical dealer offers are ${MARKET_ASOF}; source: ${MARKET_SRC}. Waiting times are published only for Maruti (Chennai). Both change monthly – always confirm with the dealer. Tick “Subtract each car’s typical dealer offer” in the filters to see prices after offers.</li>
    <li><b>Discontinued / renamed:</b> Tata Tigor (replaced by Tata Aeris) and Hyundai Tucson (delisted Nov 2025) are labelled discontinued; the XUV700 is now sold as the XUV 7XO – its variant names and prices here are from the XUV700 list and may be out of date.</li>
    <li><b>Pictures, colours &amp; 360° views:</b> every car shows a photo and its full colour list (tap a swatch to change the photo). Colour names, swatches and photos come from CarWale’s colour pages (${MEDIA_ASOF}), because the makers’ own colour pickers load by script and could not be read. “Official website” opens the maker’s model page; “360° view – official site” opens the maker’s own 360° viewer for Maruti (Arena/Nexa) and Kia, where a direct link exists; for other brands the 360° button opens CarWale’s viewer. Makers do not offer a 360° page per variant – choose the variant and colour inside their configurator. Tata’s sites had an expired security certificate when checked, so Tata links are unverified.</li>
+   <li><b>Photo gallery &amp; size:</b> click any car photo (or a tile under “Photos, colours &amp; size”) for a full-screen gallery with exterior, interior, detail, boot and colour photos – use ← / → or swipe, Esc to close. Gallery photos come from CarWale’s model image galleries (November 2026), one photo per camera angle; some cars have few or none there, and photos may show a top variant or an older model year. The Size tab draws the car to scale from its published dimensions and tyre size (the body outline is simplified), can overlay any other car, and shows it in a 5.0 × 2.5 m parking bay.</li>
+   <li><b>Variant-wise specs (${typeof SPECS_ASOF!=='undefined'?SPECS_ASOF:''}):</b> about 990 of the variants are matched to their CarWale variant pages (<code>specs.js</code>). From there: the <b>ARAI mileage of each variant</b> where CarWale publishes it in its labelled ARAI column (otherwise the fuel/gearbox figure above is kept); <b>owner-reported mileage</b> (CarWale “User Reported”) for variants that had no owner figure, which also calibrates their city/highway estimate; ground clearance where none was known; and features the hand-checked lists did not cover, tagged <span class="est">CarWale</span> in the feature list. Only features whose CarWale reading matched the hand-checked data on at least 85% of overlapping variants are used, so instrument cluster, telescopic steering, folding mirrors, wireless Android Auto/CarPlay, speakers, connected car, TPMS, headlamps, fog lamps, wheels, roof rails and wireless charging are never taken from CarWale. Boot and ground-clearance figures already here were kept where CarWale disagreed. Not matched: the Tigor (CarWale now lists the Tata Aeris line-up), N Line versions, and models whose CarWale pages have moved (XUV 7XO, Basalt X, Aircross, Tucson).</li>
    <li><b>Your filters are remembered</b> on this device, and “🔗 Copy link to this search” in the header gives a link that reopens the same filters.</li></ul></div><div>
   <div class="panel"><h2>How the price is built</h2>
    <p>Same lines as a Chennai dealer’s booking form: <b>ex-showroom + road tax &amp; registration + comprehensive insurance (+ TCS above ₹10 L) + FASTag</b> = mandatory on-road. Dealer extras (extended warranty, accessories, essential kit) and a discount are optional inputs on tab 1. Example, Hyundai Venue HX5+ 1.2 MT: ₹9,99,900 + ₹1,33,237 + ₹58,741 + ₹500 = ₹11,92,378 mandatory on-road.</p></div>
@@ -986,7 +1248,7 @@ function downloadCSV(){
 /* ============ TABS / BOOT ============ */
 const TABS=['explore','compare','best','cost','notes'];
 
-function showTab(n){TABS.forEach(x=>document.getElementById('t-'+x).classList.toggle('hidden',x!==n));document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===n));if(n==='best')renderBest();if(n==='cost')renderCost();if(n==='compare')renderCompare();}
+function showTab(n){TABS.forEach(x=>document.getElementById('t-'+x).classList.toggle('hidden',x!==n));document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===n));if(n==='best')renderBest();if(n==='cost')renderCost();if(n==='compare')renderCompare();syncStick();}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 document.getElementById('csvBtn').onclick=downloadCSV;
 document.getElementById('carSort').onchange=e=>{S.carSort=e.target.value;renderCards();};
