@@ -1412,9 +1412,9 @@ modes=-
 paddle=-
 fpark=-
 rarm=-`},
-baleno:{name:'Maruti Baleno',brand:'Maruti',body:'Hatchback',seats:5,fy26:'1,72,560',dim:[3990,1745,1530],wb:2520,boot:318,gc:170,tank:37,tyre:'195/55 R16',tx:'5-speed MT / 5-speed AMT',stars:4,ncap:'Bharat NCAP 4★ adult (26.52/32), 3★ child',conf:'good',
- eng:{P:['1.2L 4-cyl petrol',90,113],CNG:['1.2L CNG',77.5,98.5]},
- mil:{'P-MT':22.35,'P-AT':22.94,'CNG-MT':30.61,'CNG-AT':30.61},svc5:19199,svcSrc:'v3cars schedule (a Spinny table sums to ₹26,571)',resale5:50,warr:'2 yr / 40,000 km, extendable to 5 yr',
+baleno:{name:'Maruti Baleno',brand:'Maruti',body:'Hatchback',seats:5,fy26:'1,72,560',dim:[3990,1745,1530],wb:2520,boot:318,gc:170,tank:37,tyre:'195/55 R16',tx:'5-speed MT / 5-speed AMT (CNG also with AMT)',stars:4,ncap:'Bharat NCAP 4★ adult (26.52/32), 3★ child',conf:'good',
+ eng:{P:['1.2L 3-cyl petrol (Z12E)',82.9,112],CNG:['1.2L 3-cyl CNG (Z12E)',69.8,101.8]},
+ mil:{'P-MT':23.8,'P-AT':24.77,'CNG-MT':33.61,'CNG-AT':34.47},svc5:19199,svcSrc:'v3cars schedule (a Spinny table sums to ₹26,571)',resale5:50,warr:'2 yr / 40,000 km, extendable to 5 yr',
  pros:['Roomy, premium-feeling cabin with 360° camera and HUD on Alpha','Level-2 ADAS on Alpha (O)','6 airbags on all variants'],cons:['Bharat NCAP 4★ – a notch below the 5★ rivals','Low-slung 170 mm clearance','Alpha (O) with ADAS costs ≈₹15 L on-road'],who:'Buyer who wants feature-rich hatchback comfort and smooth ride.',
  ladder:[['Sigma','^sigma'],['Delta','^delta'],['Zeta','^zeta'],['Alpha','^alpha']],
  F:`ab6=S
@@ -2270,7 +2270,7 @@ conn=E?^[sgv]
 drl=S Plus
 rearwiper=G`},
 glanza:{name:'Toyota Glanza',brand:'Toyota',body:'Premium hatchback',seats:5,fy26:null,dim:[3990,1745,1530],wb:2520,boot:318,gc:170,tank:37,tyre:'195/55 R16',tx:'5-speed MT / 5-speed AMT',stars:null,ncap:'Not tested; its twin Baleno scored Bharat NCAP 4★ adult (26.52/32), 3★ child (34.81/49) with 6 airbags, Jun 2025',conf:'partial',
- eng:{P:['1.2L K-series petrol',83,112],CNG:['1.2L K-series CNG',77,98.5]},
+ eng:{P:['1.2L 3-cyl petrol (Z12E)',82.9,112],CNG:['1.2L 3-cyl CNG (Z12E)',69.8,101.8]},
  mil:{'P-MT':23.8,'P-AT':24.77,'CNG-MT':33.61},svc5:20000,svcSrc:'ESTIMATE: same platform as Baleno (₹19.2k sourced)',resale5:56,warr:'3 yr / 1,00,000 km (Toyota standard) + extended optional – verify',
  pros:['Best petrol and CNG mileage on this list (23.8 kmpl / 33.6 km/kg)','Toyota resale and service reputation','6 airbags on every variant'],cons:['Not crash-tested','Rear seat and boot as in the Baleno','No ADAS'],who:'High-mileage city/highway buyer who wants a Baleno with Toyota’s brand and warranty.',
  ladder:[['E','^e'],['S','^s'],['G','^g'],['V','^v']],
