@@ -409,10 +409,11 @@ const facOf=v=>v.fuel==='EV'?[.80,.66]:[CITY_F,HWY_F];
 const blendOf=v=>{const[c,h]=facOf(v);return 1/(.5/c+.5/h);};
 const BLEND50=1/(.5/CITY_F+.5/HWY_F);
 /* city/highway: scaled so a 50/50 mix equals the owner-reported figure when we have one; otherwise 67%/82% of ARAI */
-function cityHwy(v){const a=arai(v);const r=owner(v),[CF,HF]=facOf(v),B=blendOf(v);if(a==null){return r==null?null:{c:r*CF/B,h:r*HF/B,src:'owner',r};}let s=1,src='est';
+function cityHwy(v){const t=typeof CH_TEST!=='undefined'&&CH_TEST[v.car]&&lookup(CH_TEST[v.car],v);
+  if(t)return {c:t[0],h:t[1],src:'test',r:1/(.5/t[0]+.5/t[1]),note:t[2]};const a=arai(v);const r=owner(v),[CF,HF]=facOf(v),B=blendOf(v);if(a==null){return r==null?null:{c:r*CF/B,h:r*HF/B,src:'owner',r};}let s=1,src='est';
   if(r!=null){s=Math.max(.55,Math.min(.95,r/a))/B;src='owner';}
   return {c:Math.min(a*CF*s,a*.95),h:Math.min(a*HF*s,a*.98),src,r};}
-function chTxt(v){const x=cityHwy(v);return x?fm(x.c,v)+' / '+fm(x.h,v)+(x.src==='owner'?' <span class="ok" title="calibrated to owner-reported mileage">owner</span>':' <span class="est">est.</span>'):'–';}
+function chTxt(v){const x=cityHwy(v);return x?fm(x.c,v)+' / '+fm(x.h,v)+(x.src==='test'?' <span class="ok" title="'+x.note+'">tested</span>':x.src==='owner'?' <span class="ok" title="calibrated to owner-reported mileage">owner</span>':' <span class="est">est.</span>'):'–';}
 const fm=(m,v)=>m==null?'–':m.toFixed(1)+' '+unitOf(v);
 function realKm(v){const ch=cityHwy(v),p=U.city/100;if(!ch){const a=ASSUME[v.fuel],[CF,HF]=facOf(v);return 1/(p/(a*CF)+(1-p)/(a*HF));}return 1/(p/ch.c+(1-p)/ch.h);}
 const fuelPrice=v=>v.fuel==='D'?U.pD:v.fuel==='CNG'?U.pC:v.fuel==='EV'?U.pE:U.pP;

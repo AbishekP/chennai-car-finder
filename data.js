@@ -4680,7 +4680,7 @@ const GBX_NOTE={
 const RW={
  dzire:{'P-MT':22.4,'P-AT':22.6,'CNG-MT':25,'CNG-AT':25},
  swift:{'P-MT':22.5,'P-AT':23.2,'CNG-MT':22,'CNG-AT':22.5},
- baleno:{'P-MT':21,'CNG-AT':30},
+ /* baleno: pre-facelift (4-cyl K12N) petrol figure of 21 and a single-owner CNG AMT figure of 30 removed Nov 2026; facelift uses estimates */
  fronx:{'P-MT':19.5,'P-AT':19,'PT-MT':19,'PT-AT':20,'CNG-MT':25},
  victoris:{'P-MT':20.5,'CNG-MT':26,'HY-AT':18},
  ertiga:{'P-MT':18.8,'P-AT':17.5,'CNG-MT':22.8},
@@ -4801,7 +4801,12 @@ const MARKET={
  curvvev:{wait:null,disc:335000,note:"Oct 2026: Non-X variants; X trims ₹65k"},
  harrierev:{wait:null,disc:275000,note:"Oct 2026: Fearless+/Empowered; Adventure ₹2.5L"}
 };
-const RW_N1={'victoris|HY-AT':1,'baleno|CNG-AT':1,'kylaq|PT-AT':0};
+const RW_N1={'victoris|HY-AT':1,'kylaq|PT-AT':0};
+/* Road-tested real-world mileage [city, highway, source] (km/l, CNG km/kg). Takes priority over owner-calibrated estimates.
+   Baleno facelift (Z12E, Sep 2026): no published road test yet (Autocar, V3Cars checked Nov 2026), so it uses estimates. */
+const CH_TEST={
+ dzire:{'P-MT':[13.32,21.78,'V3Cars road test, Jun 2026 (Autocar long-termer: 14.5 / 20)'],'P-AT':[16.08,20.78,'V3Cars road test, Jul 2026']}
+};
 /* Third-party premium (IRDAI rates in force since 1 Jun 2022, before 18% GST): [3-yr bundled with new car, 1-yr renewal] by engine class */
 const TPR={s:[6521,2094],m:[10640,3416],l:[24596,7897]};
 /* EV third-party premium by motor power (IRDAI tariff for private electric cars, before GST): [3-yr new, 1-yr renewal] for ≤30 kW, 30–65 kW, >65 kW */
